@@ -16,3 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/dhcp-entry/create', [\App\Http\Controllers\DhcpEntryController::class, 'create'])->name('dhcp-entry.create');
+
+Route::get('/dhcp-entry/{dhcpEntry}', [\App\Http\Controllers\DhcpEntryController::class, 'show'])->name('dhcp-entry.show');
+
+Route::get('login', [\App\Http\Controllers\LoginController::class, 'login'])->name('login');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/', [HomepageController::class, 'index'])->name('index');
+});
