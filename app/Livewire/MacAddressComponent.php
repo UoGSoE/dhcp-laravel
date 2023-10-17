@@ -35,7 +35,11 @@ class MacAddressComponent extends Component
     {
         $validation = Validator::make(
             ['macAddresses' => $this->macAddresses],
-            ['macAddresses.*.macAddress' => 'required|regex:/^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/']
+            ['macAddresses.*.macAddress' => 'required|regex:/^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/'],
+            [
+                'required' => 'The field must not be empty',
+                'regex' => 'The field must be a valid MAC address'
+            ]
         );
 
         // Validation error for this field
