@@ -9,7 +9,7 @@ use Livewire\Component;
 class MacAddressComponent extends Component
 {
     public array $macAddresses;
-    public array $validatedMacAddresses;
+    public array $validatedMacAddresses = [];
     public array $validationErrors = [];
 
     public function render()
@@ -17,6 +17,11 @@ class MacAddressComponent extends Component
         return view('livewire.mac-address-component', [
             'macAddresses' => $this->macAddresses
         ]);
+    }
+
+    public function mount()
+    {
+        $this->updated('macAddresses.0.macAddress');
     }
 
     public function addMacAddress()
@@ -63,6 +68,9 @@ class MacAddressComponent extends Component
         }
 
         // Only emits event to update macAddresses array if validation passes
-        $this->dispatch('macAddressesUpdated', macAddresses: $this->validatedMacAddresses);
+        if ($this->validatedMacAddresses)
+        {
+            $this->dispatch('macAddressesUpdated', macAddresses: $this->validatedMacAddresses);
+        }
     }
 }

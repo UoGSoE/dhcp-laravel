@@ -62,15 +62,20 @@ class DhcpEntryCreate extends Component
         $dhcpEntry = new DhcpEntry($dhcpEntryData);
         // $dhcpEntry->save();
 
+
+        dump($dhcpEntry);
+        dump($this->macAddresses);
+
+        $macAddressData = [];
         foreach ($this->macAddresses as $macAddress) {
-            $macAddressData = [
+            $macAddressData[] = [
                 'mac_address' => $macAddress['macAddress'],
                 'dhcp_entry_id' => $this->dhcpEntryId
             ];
 
-            $macAddress = new MacAddress($macAddressData);
             // $macAddress->save();
         }
+        dump($macAddressData);
     }
 
     #[On('macAddressesUpdated')]
