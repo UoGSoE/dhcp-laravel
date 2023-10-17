@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\DhcpEntryCreate;
+use App\Livewire\Index;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,16 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::post('/dhcp-entry/create', [\App\Http\Controllers\DhcpEntryController::class, 'create'])->name('dhcp-entry.create');
-
-Route::get('/dhcp-entry/{dhcpEntry}', [\App\Http\Controllers\DhcpEntryController::class, 'show'])->name('dhcp-entry.show');
-
-Route::get('login', [\App\Http\Controllers\LoginController::class, 'login'])->name('login');
+Route::get('/login', \App\Livewire\Login::class)->name('login');
+Route::post('/authenticate', [\App\Livewire\Login::class, 'authenticate'])->name('authenticate');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [HomepageController::class, 'index'])->name('index');
+    Route::get('/', \App\Livewire\Homepage::class)->name('index');
+
+    Route::get('/dhcp-entry/create', \App\Livewire\DhcpEntryCreate::class)->name('dhcp-entry.create');
+
+    // Route::post('/dhcp-entry/create', [\App\Http\Controllers\DhcpEntryController::class, 'create'])->name('dhcp-entry.create');
+
+    Route::get('/dhcp-entry/{dhcpEntry}', [\App\Http\Controllers\DhcpEntryController::class, 'show'])->name('dhcp-entry.show');
 });

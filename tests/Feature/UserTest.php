@@ -11,7 +11,7 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_can_be_created()
+    public function test_user_can_be_created(): void
     {
         $userData = [
             'forenames' => 'Joe',

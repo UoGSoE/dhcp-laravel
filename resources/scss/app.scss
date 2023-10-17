@@ -1,0 +1,18 @@
+// Font Awesome
+$fa-font-path: "/webfonts";
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/solid";
+@import "@fortawesome/fontawesome-free/scss/regular";
+
+// Tailwind
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+// .tooltip {
+//     @apply invisible absolute;
+// }
+
+// .has-tooltip:hover .tooltip {
+//     @apply visible z-50;
+// }
