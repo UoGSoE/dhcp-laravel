@@ -47,6 +47,6 @@ class Login extends Component
         }
 
         Auth::login($user, $this->rememberMe);
-        $this->redirect(route('index'));
+        $this->redirect(route('dhcp-entries'));
     }
 }

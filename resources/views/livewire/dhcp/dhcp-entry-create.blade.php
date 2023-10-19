@@ -25,7 +25,7 @@
                             <div
                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                                 <input
-                                    wire:model="owner"
+                                    wire:model.live="owner"
                                     type="text"
                                     name="owner"
                                     id="owner"
@@ -33,6 +33,15 @@
                                     class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                     placeholder="Owner (email address)"/>
                             </div>
+
+                            @error('owner')
+                            <div class='error-message text-red-700 mt-3 flex items-center'>
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span class='px-2 text-sm'>
+                                    {{ $message}}
+                                </span>
+                            </div>
+                            @enderror
                         </div>
                     </div>
 
@@ -47,7 +56,7 @@
                             <div
                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                                 <input
-                                    wire:model="ipAddress"
+                                    wire:model.live="ipAddress"
                                     type="text"
                                     name="ipAddress"
                                     id="ipAddress"
@@ -55,6 +64,16 @@
                                     class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                     placeholder="IP address (leave blank for pool)"/>
                             </div>
+
+                            @error('ip_address')
+                            <div class='error-message text-red-700 mt-3 flex items-center'>
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span class='px-2 text-sm'>
+                                    {{ $message}}
+                                </span>
+                            </div>
+                            @enderror
+
                         </div>
                     </div>
 
@@ -70,7 +89,7 @@
                             <div
                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                                 <input
-                                    wire:model="hostname"
+                                    wire:model.live="hostname"
                                     type="text"
                                     name="hostName"
                                     id="hostName"
@@ -84,6 +103,15 @@
                                 <span class='px-2 text-sm'>Hostname must only contain letters,
                                     numbers, hyphens or full-stops.</span>
                             </div>
+
+                            @error('hostname')
+                            <div class='error-message text-red-700 mt-3 flex items-center'>
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span class='px-2 text-sm'>
+                                    {{ $message }}
+                                </span>
+                            </div>
+                            @enderror
                         </div>
                     </div>
 
@@ -91,7 +119,7 @@
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
                         <label for="isSsd">SSD?</label>
                         <input
-                            wire:model="isSsd"
+                            wire:model.live="isSsd"
                             type="checkbox"
                             id="isSsd"
                             name="isSsd"
@@ -102,7 +130,7 @@
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
                         <label for="isActive">Active?</label>
                         <input
-                            wire:model="isActive"
+                            wire:model.live="isActive"
                             type="checkbox"
                             id="isActive"
                             name="isActive"
@@ -116,7 +144,7 @@
                         <label for="notes" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">Notes</label>
                         <div class="mt-2 sm:col-span-2 sm:mt-0">
                             <textarea
-                                wire:model="notes.0"
+                                wire:model.live="notes.0"
                                 placeholder="Add note here..."
                                 id="notes"
                                 name="notes"
@@ -135,7 +163,11 @@
             <button
                 wire:click.prevent="createDhcpEntry()"
                 type="submit"
-                class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                @if (!$macAddressValidationPasses or count($validationErrors) > 0)
+                    aria-disabled
+                    disabled
+                @endif
+                class="{{ (!$macAddressValidationPasses or count($validationErrors) > 0) ? 'disabled:opacity-75 disabled aria-disabled ' : '' }} inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 Save
             </button>
         </div>

@@ -3,18 +3,18 @@
 namespace App\Livewire;
 
 use App\Models\MacAddress;
+use App\Services\InputValidationService;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
 class MacAddressComponent extends Component
 {
     public array $macAddresses;
-    public array $validatedMacAddresses = [];
     public array $validationErrors = [];
 
     public function render()
     {
-        return view('livewire.mac-address-component', [
+        return view('livewire.dhcp.mac-address-component', [
             'macAddresses' => $this->macAddresses
         ]);
     }
@@ -38,39 +38,30 @@ class MacAddressComponent extends Component
 
     public function updated($field)
     {
-        $validation = Validator::make(
+        $this->validationErrors = InputValidationService::validateInput(
             ['macAddresses' => $this->macAddresses],
             ['macAddresses.*.macAddress' => 'required|regex:/^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/'],
             [
-                'required' => 'The field must not be empty',
-                'regex' => 'The field must be a valid MAC address'
-            ]
+                'required' => 'This field must not be empty',
+                'regex' => 'This field must be a valid MAC address'
+            ],
+            $field,
+            $this->validationErrors
         );
-
-        // Validation error for this field
-        $error = $validation->errors()->get($field);
-
-        // Save validation errors for this field
-        if ($error) {
-            $this->validationErrors[$field] = $error;
-        } else {
-            unset($this->validationErrors[$field]);
-        }
 
         // Update error bag
         $this->setErrorBag($this->validationErrors);
 
-        // Update validatedMacAddresses array
-        foreach($this->macAddresses as $index => $macAddress) {
-            if (!in_array("macAddresses.{$index}.macAddress", array_keys($this->validationErrors))) {
-                $this->validatedMacAddresses[$index] = $macAddress['macAddress'];
-            }
+        if ($this->validationErrors) {
+            $this->dispatch('updateValidationPassStatus', validationPassStatus: false);
+            return;
         }
 
         // Only emits event to update macAddresses array if validation passes
-        if ($this->validatedMacAddresses)
+        if ($this->macAddresses)
         {
-            $this->dispatch('macAddressesUpdated', macAddresses: $this->validatedMacAddresses);
+            $this->dispatch('updateValidationPassStatus', validationPassStatus: true);
+            $this->dispatch('macAddressesUpdated', macAddresses: $this->macAddresses);
         }
     }
 }

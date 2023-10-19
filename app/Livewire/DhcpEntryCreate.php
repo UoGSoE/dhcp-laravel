@@ -4,14 +4,18 @@ namespace App\Livewire;
 
 use App\Models\DhcpEntry;
 use App\Models\MacAddress;
+use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Ramsey\Uuid\Uuid;
+use Livewire\Attributes\Rule;
+use App\Services\InputValidationService;
 
 class DhcpEntryCreate extends Component
 {
-    public string $dhcpEntryId = '';
+    public string $id = '';
     public string $hostname = '';
     public string $ipAddress = '';
     public string $owner = '';
@@ -20,12 +24,15 @@ class DhcpEntryCreate extends Component
     public bool $isActive = true;
 
     public array $macAddresses = [];
+    public bool $macAddressValidationPasses = false;
+
+    public array $validationErrors = [];
 
     public array $notes =[];
 
     public function __construct()
     {
-        $this->dhcpEntryId = Uuid::uuid4()->toString();
+        $this->id = Uuid::uuid4()->toString();
         $this->macAddresses[] = [
             'macAddress' => '',
         ];
@@ -37,20 +44,30 @@ class DhcpEntryCreate extends Component
         return view('livewire.dhcp.dhcp-entry-create');
     }
 
+    public function updated($field)
+    {
+        $this->validationErrors = InputValidationService::validateInput(
+            ['hostname' => $this->hostname, 'owner' => $this->owner],
+            ['hostname' => 'required', 'owner' => 'required'],
+            ['required' => 'This field must not be empty'],
+            $field,
+            $this->validationErrors,
+        );
+
+        $this->setErrorBag($this->validationErrors);
+    }
+
     public function createDhcpEntry()
     {
         $this->validate([
             'hostname' => 'required',
             'owner' => 'required',
-            'addedBy' => 'required',
             'isSsd' => 'required',
             'isActive' => 'required'
         ]);
 
-        //TODO add error handling when validation fails
-
         $dhcpEntryData = [
-            'id' => $this->dhcpEntryId,
+            'id' => $this->id,
             'hostname' => $this->hostname,
             'ip_address' => $this->ipAddress,
             'owner' => $this->owner,
@@ -60,27 +77,49 @@ class DhcpEntryCreate extends Component
         ];
 
         $dhcpEntry = new DhcpEntry($dhcpEntryData);
-        // $dhcpEntry->save();
 
+        try {
+            $dhcpEntry->save();
 
-        dump($dhcpEntry);
-        dump($this->macAddresses);
+            $macAddressData = [];
+            foreach ($this->macAddresses as $key => $value) {
+                $macAddressData[] = [
+                    'id' => Uuid::uuid4()->toString(),
+                    'mac_address' => $value['macAddress'],
+                    'dhcp_entry_id' => $this->id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+                $macAddress = new MacAddress([
+                    'mac_address' => $value['macAddress'],
+                    'dhcp_entry_id' => $this->id
+                ]);
+            }
 
-        $macAddressData = [];
-        foreach ($this->macAddresses as $macAddress) {
-            $macAddressData[] = [
-                'mac_address' => $macAddress['macAddress'],
-                'dhcp_entry_id' => $this->dhcpEntryId
-            ];
+            MacAddress::insert($macAddressData);
 
-            // $macAddress->save();
+            $this->redirect(route('dhcp-entries'));
+
+        } catch (Exception $e) {
+            if ($e instanceof ValidationException) {
+                $errors = $e->validator->getMessageBag()->getMessages();
+                foreach ($errors as $key => $error) {
+                    $this->validationErrors[$key] = $error;
+                }
+                $this->setErrorBag($this->validationErrors);
+            }
         }
-        dump($macAddressData);
     }
 
     #[On('macAddressesUpdated')]
     public function updateMacAddresses($macAddresses)
     {
         $this->macAddresses = $macAddresses;
+    }
+
+    #[On('updateValidationPassStatus')]
+    public function updateMacValidationStatus($validationPassStatus)
+    {
+        $this->macAddressValidationPasses = $validationPassStatus;
     }
 }

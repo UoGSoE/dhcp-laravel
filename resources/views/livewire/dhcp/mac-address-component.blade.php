@@ -19,9 +19,12 @@
                 </div>
 
                 @error('macAddresses.' . $index . '.macAddress')
-                    <span class="error">
-                        {{ $message }}
-                    </span>
+                    <div class='error-message text-red-700 mt-3 flex items-center'>
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span class='px-2 text-sm'>
+                            {{ $message}}
+                        </span>
+                    </div>
                 @enderror
             </div>
         </div>

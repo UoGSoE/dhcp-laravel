@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\DhcpEntryCreate;
+use App\Livewire\DhcpEntryTable;
 use App\Livewire\Index;
 use Illuminate\Support\Facades\Route;
 
@@ -19,11 +20,9 @@ Route::get('/login', \App\Livewire\Login::class)->name('login');
 Route::post('/authenticate', [\App\Livewire\Login::class, 'authenticate'])->name('authenticate');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', \App\Livewire\Homepage::class)->name('index');
+    // Route::get('/', \App\Livewire\Homepage::class)->name('index');
 
+    Route::get('/dhcp-entries', \App\Livewire\DhcpEntryTable::class)->name('dhcp-entries');
     Route::get('/dhcp-entry/create', \App\Livewire\DhcpEntryCreate::class)->name('dhcp-entry.create');
-
-    // Route::post('/dhcp-entry/create', [\App\Http\Controllers\DhcpEntryController::class, 'create'])->name('dhcp-entry.create');
-
     Route::get('/dhcp-entry/{dhcpEntry}', [\App\Http\Controllers\DhcpEntryController::class, 'show'])->name('dhcp-entry.show');
 });
