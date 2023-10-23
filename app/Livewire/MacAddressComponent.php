@@ -19,11 +19,6 @@ class MacAddressComponent extends Component
         ]);
     }
 
-    public function mount()
-    {
-        $this->updated('macAddresses.0.macAddress');
-    }
-
     public function addMacAddress()
     {
         $macAddressData = [

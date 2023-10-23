@@ -26,11 +26,9 @@ class Login extends Component
         }
 
         return view('livewire.login');
-        // ->extends('layouts.app')
-        // ->section('content');
     }
 
-    public function authenticate()
+    public function authenticate(LdapService $ldapService)
     {
         $this->validate([
             'guid' => 'required',
@@ -43,6 +41,13 @@ class Login extends Component
                 'guid' => 'Invalid GUID'
             ]);
 
+            return;
+        }
+
+        if (!$ldapService->authenticate($this->guid, $this->password)) {
+            throw ValidationException::withMessages([
+                'authentication' => 'Authentication failed'
+            ]);
             return;
         }
 

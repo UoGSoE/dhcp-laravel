@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('dhcp_entries', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('hostname')->unique()->nullable(false);
-            $table->ipAddress('ip_address')->unique()->nullable();
+            $table->ipAddress('ip_address')->nullable();
             $table->string('owner')->nullable(false);
             $table->string('added_by')->nullable(false);
             $table->boolean('is_ssd')->nullable(false);

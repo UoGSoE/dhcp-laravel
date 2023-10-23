@@ -36,7 +36,11 @@ class DhcpEntry extends Model
     public function save(array $options = [])
     {
         $this->checkIfValueAlreadyExists('hostname', 'This hostname is already in use.');
-        $this->checkIfValueAlreadyExists('ip_address', 'This IP address is already in use.');
+
+        // Check only if a fixed IP address is inputted
+        if ($this->attributes['ip_address']) {
+            $this->checkIfValueAlreadyExists('ip_address', 'This IP address is already in use.');
+        }
 
         return parent::save($options);
     }

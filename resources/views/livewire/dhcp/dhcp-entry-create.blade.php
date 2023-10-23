@@ -89,12 +89,15 @@
                             <div
                                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                                 <input
+                                    @if (!$ipAddress or $ipAddress == '')
+                                        disabled
+                                    @endif
                                     wire:model.live="hostname"
                                     type="text"
                                     name="hostName"
                                     id="hostName"
                                     autocomplete=""
-                                    class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                    class="{{ (!$ipAddress or $ipAddress == '') ? 'disabled:bg-gray-100 disabled:text-slate-500 ' : '' }} block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                     placeholder="Hostname (only for fixed IP machines)"/>
                             </div>
 

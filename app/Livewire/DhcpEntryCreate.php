@@ -4,20 +4,20 @@ namespace App\Livewire;
 
 use App\Models\DhcpEntry;
 use App\Models\MacAddress;
+use App\Services\InputValidationService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Ohffs\Ldap\LdapService;
 use Ramsey\Uuid\Uuid;
-use Livewire\Attributes\Rule;
-use App\Services\InputValidationService;
 
 class DhcpEntryCreate extends Component
 {
-    public string $id = '';
+    public string $id;
     public string $hostname = '';
-    public string $ipAddress = '';
+    public ?string $ipAddress = null;
     public string $owner = '';
     public string $addedBy = '';
     public bool $isSsd = false;
@@ -25,10 +25,9 @@ class DhcpEntryCreate extends Component
 
     public array $macAddresses = [];
     public bool $macAddressValidationPasses = false;
-
     public array $validationErrors = [];
 
-    public array $notes =[];
+    public array $notes = [];
 
     public function __construct()
     {
@@ -36,7 +35,6 @@ class DhcpEntryCreate extends Component
         $this->macAddresses[] = [
             'macAddress' => '',
         ];
-        $this->addedBy = Auth::user()->guid;
     }
 
     public function render()
@@ -46,9 +44,14 @@ class DhcpEntryCreate extends Component
 
     public function updated($field)
     {
+        // If IP address updated after validation, remove error
+        if ($field == 'ipAddress' && array_key_exists('ip_address', $this->validationErrors)) {
+            unset($this->validationErrors['ip_address']);
+        }
+
         $this->validationErrors = InputValidationService::validateInput(
-            ['hostname' => $this->hostname, 'owner' => $this->owner],
-            ['hostname' => 'required', 'owner' => 'required'],
+            ['owner' => $this->owner],
+            ['owner' => 'required'],
             ['required' => 'This field must not be empty'],
             $field,
             $this->validationErrors,
@@ -57,13 +60,21 @@ class DhcpEntryCreate extends Component
         $this->setErrorBag($this->validationErrors);
     }
 
-    public function createDhcpEntry()
+    public function createDhcpEntry(LdapService $ldapService)
     {
+        $user = $ldapService->findUser(Auth::user()->guid);
+        $this->addedBy = $user->username . ' (' . $user->forenames . ')';
+
+        if (!$this->hostname || $this->hostname === '') {
+            $this->hostname = 'eng-pool-' . $this->id;
+        }
+
         $this->validate([
             'hostname' => 'required',
             'owner' => 'required',
+            'addedBy' => 'required',
             'isSsd' => 'required',
-            'isActive' => 'required'
+            'isActive' => 'required',
         ]);
 
         $dhcpEntryData = [
