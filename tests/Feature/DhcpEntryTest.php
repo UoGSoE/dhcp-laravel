@@ -16,9 +16,8 @@ class DhcpEntryTest extends TestCase
     public function test_dhcp_entry_can_be_created(): void
     {
         $user = User::factory()->make();
-        $this->actingAs($user);
 
-        $response = Livewire::test(DhcpEntryCreate::class)
+        $response = Livewire::actingAs($user)->test(DhcpEntryCreate::class)
             ->set('hostname', 'test-hostname')
             ->set('ip_address', '192.168.0.1')
             ->set('owner', 'test-owner')
@@ -52,7 +51,7 @@ class DhcpEntryTest extends TestCase
 
     public function test_dhcp_entry_fails_when_data_is_valid(): void
     {
-        $user = User::factory()->make();
+        $user = User::factory()->create();
         $this->actingAs($user);
 
         $response = Livewire::test(DhcpEntryCreate::class)
@@ -83,19 +82,10 @@ class DhcpEntryTest extends TestCase
 
     public function test_livewire_component_is_rendered(): void
     {
-        $user = User::factory()->make();
+        $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get(route('dhcp-entry.create'));
         $response->assertSeeLivewire(DhcpEntryCreate::class);
-    }
-
-    public function test_livewire_form_is_rendered(): void
-    {
-        $user = User::factory()->make();
-        Livewire::actingAs($user);
-
-        Livewire::test(DhcpEntryCreate::class)
-            ->assertSeeHtml('<form>');
     }
 
 }

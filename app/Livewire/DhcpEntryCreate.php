@@ -29,7 +29,7 @@ class DhcpEntryCreate extends Component
 
     public array $notes = [];
 
-    public function __construct()
+    public function mount()
     {
         $this->id = Uuid::uuid4()->toString();
         $this->macAddresses[] = [
@@ -39,8 +39,7 @@ class DhcpEntryCreate extends Component
 
     public function render()
     {
-        return view('livewire.dhcp.dhcp-entry-create', [
-        ]);
+        return view('livewire.dhcp.dhcp-entry-create');
     }
 
     public function updated($field): void

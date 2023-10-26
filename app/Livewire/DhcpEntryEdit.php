@@ -18,7 +18,7 @@ class DhcpEntryEdit extends Component
     public ?bool $isSsd;
     public ?bool $isActive;
 
-    public ?array $macAddresses;
+    public $macAddresses;
 
     public bool $macAddressValidationPasses;
 
@@ -32,7 +32,7 @@ class DhcpEntryEdit extends Component
         $this->addedBy = $this->dhcpEntry->added_by;
         $this->isSsd = $this->dhcpEntry->is_ssd;
         $this->isActive = $this->dhcpEntry->is_active;
-        $this->macAddresses = $this->dhcpEntry->macAddresses->toArray();
+        $this->macAddresses = $this->dhcpEntry->macAddresses;
     }
 
     public function render()

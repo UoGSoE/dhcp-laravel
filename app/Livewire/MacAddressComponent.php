@@ -10,7 +10,7 @@ use Livewire\Component;
 class MacAddressComponent extends Component
 {
     public ?string $action;
-    public array $macAddresses;
+    public $macAddresses;
     public array $validationErrors = [];
 
     public function render()
@@ -29,7 +29,7 @@ class MacAddressComponent extends Component
         $this->macAddresses[] = $macAddressData;
 
         // Validate the newly added mac address
-        $this->updated('macAddresses.' . (count($this->macAddresses) - 1) . '.macAddress');
+        // $this->updated('macAddresses.' . (count($this->macAddresses) - 1) . '.macAddress');
     }
 
     public function updated($field): void

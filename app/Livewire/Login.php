@@ -39,15 +39,12 @@ class Login extends Component
             throw ValidationException::withMessages([
                 'guid' => 'Invalid GUID'
             ]);
-
-            return;
         }
 
         if (!$ldapService->authenticate($this->guid, $this->password)) {
             throw ValidationException::withMessages([
                 'authentication' => 'Authentication failed'
             ]);
-            return;
         }
 
         Auth::login($user, $this->rememberMe);
