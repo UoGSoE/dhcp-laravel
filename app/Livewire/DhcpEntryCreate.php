@@ -39,10 +39,11 @@ class DhcpEntryCreate extends Component
 
     public function render()
     {
-        return view('livewire.dhcp.dhcp-entry-create');
+        return view('livewire.dhcp.dhcp-entry-create', [
+        ]);
     }
 
-    public function updated($field)
+    public function updated($field): void
     {
         // If IP address updated after validation, remove error
         if ($field == 'ipAddress' && array_key_exists('ip_address', $this->validationErrors)) {
@@ -60,7 +61,7 @@ class DhcpEntryCreate extends Component
         $this->setErrorBag($this->validationErrors);
     }
 
-    public function createDhcpEntry(LdapService $ldapService)
+    public function createDhcpEntry(LdapService $ldapService): void
     {
         $user = $ldapService->findUser(Auth::user()->guid);
         $this->addedBy = $user->username . ' (' . $user->forenames . ')';
@@ -101,10 +102,6 @@ class DhcpEntryCreate extends Component
                     'created_at' => now(),
                     'updated_at' => now()
                 ];
-                $macAddress = new MacAddress([
-                    'mac_address' => $value['macAddress'],
-                    'dhcp_entry_id' => $this->id
-                ]);
             }
 
             MacAddress::insert($macAddressData);

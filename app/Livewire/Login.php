@@ -15,7 +15,6 @@ class Login extends Component
     public bool $rememberMe = false;
 
     public function __construct(
-        // protected LdapService $ldapService
     ) {
     }
 
@@ -28,7 +27,7 @@ class Login extends Component
         return view('livewire.login');
     }
 
-    public function authenticate(LdapService $ldapService)
+    public function authenticate(LdapService $ldapService): void
     {
         $this->validate([
             'guid' => 'required',

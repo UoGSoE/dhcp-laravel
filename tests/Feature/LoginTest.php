@@ -38,6 +38,8 @@ class LoginTest extends TestCase
 
     public function test_login_fails_when_data_is_invalid(): void
     {
+        config()->set('ldap.authentication', false);
+
         $response = $this->from(route('authenticate'))->post(route('authenticate'), [
             'guid' => 123,
             'password' => ''
@@ -51,6 +53,8 @@ class LoginTest extends TestCase
 
     public function test_login_succeeds_when_user_exists(): void
     {
+        config()->set('ldap.authentication', false);
+
         $userId = Uuid::uuid4()->toString();
         $user = $this->createValidUser($userId);
         $response = $this->setInputsAndSubmitForm();
@@ -59,14 +63,18 @@ class LoginTest extends TestCase
 
     public function test_redirects_to_index_page_when_login_succeeds(): void
     {
+        config()->set('ldap.authentication', false);
+
         $userId = Uuid::uuid4()->toString();
         $user = $this->createValidUser($userId);
         $response = $this->setInputsAndSubmitForm();
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('dhcp-entries'));
     }
 
     public function test_throws_error_to_user_when_login_fails(): void
     {
+        config()->set('ldap.authentication', false);
+
         $response = $this->setInputsAndSubmitForm();
         $response->assertHasErrors();
     }

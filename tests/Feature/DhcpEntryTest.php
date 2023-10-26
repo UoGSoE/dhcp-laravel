@@ -25,7 +25,7 @@ class DhcpEntryTest extends TestCase
             ->set('added_by', 'test-added-by')
             ->set('is_ssd', false)
             ->set('is_active', true)
-            ->call('create')
+            ->call('createDhcpEntry')
             ->assertHasNoErrors(
                 'hostname',
                 'ip_address',
@@ -62,7 +62,7 @@ class DhcpEntryTest extends TestCase
             ->set('added_by', '')
             ->set('is_ssd', '')
             ->set('is_active', '')
-            ->call('create')
+            ->call('createDhcpEntry')
             ->assertHasErrors(
                 'ip_address',
                 'owner',

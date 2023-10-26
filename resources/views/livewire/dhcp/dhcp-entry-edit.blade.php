@@ -1,16 +1,24 @@
 @extends('components.forms.dhcp-form-base')
 
+@props([
+    'action' => 'edit',
+])
+
 @section('form-title')
-    Create DHCP Entry
+    Edit DHCP Entry
 @endsection
 
 @section('mac-addresses-input')
-    <livewire:mac-address-component :macAddresses="$macAddresses" />
+    <livewire:mac-address-component
+        :macAddresses="$macAddresses"
+        :action="$action"
+    />
 @endsection
 
 @section('owner-input')
     <input
         wire:model.live="owner"
+        value="{{ $dhcpEntry->owner }}"
         type="text"
         name="owner"
         id="owner"
@@ -22,6 +30,7 @@
 @section('ip-address-input')
     <input
         wire:model.live="ipAddress"
+        value="{{ $dhcpEntry->ip_address }}"
         type="text"
         name="ipAddress"
         id="ipAddress"
@@ -32,10 +41,11 @@
 
 @section('hostname-input')
     <input
-        @if (!$ipAddress or $ipAddress=='' )
+        @if (!$dhcpEntry->ip_address or $dhcpEntry->ip_address == '')
             disabled
         @endif
         wire:model.live="hostname"
+        value="{{ $dhcpEntry->hostname }}"
         type="text"
         name="hostName"
         id="hostName"
@@ -47,22 +57,26 @@
 @section('ssd-input')
     <input
         wire:model.live="isSsd"
+        value="{{ boolval($dhcpEntry->ssd) == true ? 'true' : 'false' }}"
         type="checkbox"
         id="isSsd"
         name="isSsd"
-        value="false"
-        />
+        value="true"
+        @if (boolval($dhcpEntry->ssd) == true)
+            checked
+        @endif />
 @endsection
 
 @section('status-input')
     <input
         wire:model.live="isActive"
+        value="{{ boolval($dhcpEntry->is_active) == true ? 'true' : 'false' }}"
         type="checkbox"
         id="isActive"
         name="isActive"
-        value="true"
-        checked
-        />
+        @if (boolval($dhcpEntry->is_active) == true)
+            checked
+        @endif />
 @endsection
 
 @section('notes-input')
@@ -72,10 +86,12 @@
 
 @section('save-cancel-buttons')
     <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
-    <button wire:click.prevent="createDhcpEntry()" type="submit" @if (!$macAddressValidationPasses or
-        count($validationErrors)> 0)
-        aria-disabled
-        disabled
+    <button
+        wire:click.prevent="createDhcpEntry()"
+        type="submit"
+        @if (!$macAddressValidationPasses or count($validationErrors)> 0)
+            aria-disabled
+            disabled
         @endif
         class="{{ (!$macAddressValidationPasses or count($validationErrors) > 0) ? 'disabled:opacity-75 disabled
         aria-disabled ' : '' }} inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm

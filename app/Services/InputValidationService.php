@@ -12,8 +12,7 @@ class InputValidationService
         array $messages = [],
         string $inputField,
         array $validationErrors,
-    ): array
-    {
+    ): array {
         $validation = Validator::make(
             $data,
             $rules,
