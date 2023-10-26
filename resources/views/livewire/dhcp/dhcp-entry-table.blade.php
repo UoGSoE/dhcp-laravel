@@ -28,6 +28,10 @@
             'property' => '',
             'label' => 'Notes',
         ],
+        'ssd' => [
+            'property' => 'is_ssd',
+            'label' => 'SSD?',
+        ],
         'active' => [
             'property' => 'is_active',
             'label' => 'Active',
@@ -65,18 +69,6 @@
         </div>
 
         <div>
-            {{-- Pagination dropdown --}}
-            {{-- <div>
-                <label for="perPage" class="block text-sm font-medium leading-6 text-gray-900">Results per page</label>
-                <select wire:model.live="perPage" id="perPage" name="perPage"
-                    class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    <option>10</option>
-                    <option>25</option>
-                    <option>50</option>
-                    <option>100</option>
-                </select>
-            </div> --}}
-
             {{-- Active filter --}}
             <div>
                 <label for="activeFilter" class="block text-sm font-medium leading-6 text-gray-900">Active</label>
@@ -139,9 +131,7 @@
                                     {{ $dhcpEntry->hostname }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    @foreach ($dhcpEntry->macAddresses as $macAddress)
-                                        <div>{{ $macAddress->mac_address }}</div>
-                                    @endforeach
+                                    <div>{{ $dhcpEntry->mac_address }}</div>
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     {{ $dhcpEntry->ip_address }}
@@ -157,6 +147,15 @@
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     {{ $dhcpEntry->notes }}
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <span>
+                                        @if ($dhcpEntry->is_ssd)
+                                            <i class="fa-solid fa-check"></i>
+                                        @else
+                                            <i class="fa-solid fa-times"></i>
+                                        @endif
+                                    </span>
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset

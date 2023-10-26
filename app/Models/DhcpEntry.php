@@ -16,17 +16,13 @@ class DhcpEntry extends Model
     protected $fillable = [
         'id',
         'hostname',
-        'ip_address',
+        'mac_address', // 'macAddress' in Livewire
+        'ip_address', // 'ipAddress' in Livewire
         'owner',
-        'added_by',
-        'is_ssd',
-        'is_active'
+        'added_by', // 'addedBy' in Livewire
+        'is_ssd', // 'isSsd' in Livewire
+        'is_active' // 'isActive' in Livewire
     ];
-
-    public function macAddresses()
-    {
-        return $this->hasMany(MacAddress::class);
-    }
 
     public function notes()
     {

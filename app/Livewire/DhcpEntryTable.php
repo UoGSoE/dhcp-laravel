@@ -4,8 +4,10 @@ namespace App\Livewire;
 
 use App\Models\DhcpEntry;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Ohffs\Ldap\LdapService;
 
 class DhcpEntryTable extends Component
 {
@@ -50,15 +52,13 @@ class DhcpEntryTable extends Component
     public function render()
     {
         return view('livewire.dhcp.dhcp-entry-table', [
-            'dhcpEntries' => DhcpEntry::with(['macAddresses', 'notes'])
+            'dhcpEntries' => DhcpEntry::with(['notes'])
                 ->where(function ($query) {
-                    $query->where('hostname', 'like', '%' . $this->search . '%')
+                    $query->where('mac_address', 'like', '%' . $this->search . '%')
+                    ->orWhere('hostname', 'like', '%' . $this->search . '%')
                     ->orWhere('ip_address', 'like', '%' . $this->search . '%')
                     ->orWhere('added_by', 'like', '%' . $this->search . '%')
                     ->orWhere('owner', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('macAddresses', function ($query) {
-                        $query->where('mac_address', 'like', '%' . $this->search . '%');
-                    })
                     ->orWhereHas('notes', function ($query) {
                         $query->where('note', 'like', '%' . $this->search . '%');
                     });

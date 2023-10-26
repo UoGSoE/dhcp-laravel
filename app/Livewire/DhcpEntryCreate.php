@@ -3,11 +3,11 @@
 namespace App\Livewire;
 
 use App\Models\DhcpEntry;
-use App\Models\MacAddress;
 use App\Services\InputValidationService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Ohffs\Ldap\LdapService;
@@ -16,6 +16,7 @@ use Ramsey\Uuid\Uuid;
 class DhcpEntryCreate extends Component
 {
     public string $id;
+    public string $macAddress = '';
     public string $hostname = '';
     public ?string $ipAddress = null;
     public string $owner = '';
@@ -23,8 +24,6 @@ class DhcpEntryCreate extends Component
     public bool $isSsd = false;
     public bool $isActive = true;
 
-    public array $macAddresses = [];
-    public bool $macAddressValidationPasses = false;
     public array $validationErrors = [];
 
     public array $notes = [];
@@ -32,9 +31,6 @@ class DhcpEntryCreate extends Component
     public function mount()
     {
         $this->id = Uuid::uuid4()->toString();
-        $this->macAddresses[] = [
-            'macAddress' => '',
-        ];
     }
 
     public function render()
@@ -50,9 +46,12 @@ class DhcpEntryCreate extends Component
         }
 
         $this->validationErrors = InputValidationService::validateInput(
-            ['owner' => $this->owner],
-            ['owner' => 'required'],
-            ['required' => 'This field must not be empty'],
+            ['owner' => $this->owner, 'macAddress' => $this->macAddress],
+            ['owner' => 'required', 'macAddress' => 'required|mac_address'],
+            [
+                'required' => 'This field must not be empty',
+                'mac_address' => 'This field must be a valid MAC address'
+            ],
             $field,
             $this->validationErrors,
         );
@@ -62,14 +61,16 @@ class DhcpEntryCreate extends Component
 
     public function createDhcpEntry(LdapService $ldapService): void
     {
-        $user = $ldapService->findUser(Auth::user()->guid);
-        $this->addedBy = $user->username . ' (' . $user->forenames . ')';
+        $this->addedBy = Auth::user()->getFullNameAttribute();
+        // $user = $ldapService->findUser(Auth::user()->guid);
+        // $this->addedBy = $user->username . ' (' . $user->forenames . ')';
 
         if (!$this->hostname || $this->hostname === '') {
             $this->hostname = 'eng-pool-' . $this->id;
         }
 
         $this->validate([
+            'macAddress' => 'required',
             'hostname' => 'required',
             'owner' => 'required',
             'addedBy' => 'required',
@@ -79,6 +80,7 @@ class DhcpEntryCreate extends Component
 
         $dhcpEntryData = [
             'id' => $this->id,
+            'mac_address' => $this->macAddress,
             'hostname' => $this->hostname,
             'ip_address' => $this->ipAddress,
             'owner' => $this->owner,
@@ -92,19 +94,6 @@ class DhcpEntryCreate extends Component
         try {
             $dhcpEntry->save();
 
-            $macAddressData = [];
-            foreach ($this->macAddresses as $key => $value) {
-                $macAddressData[] = [
-                    'id' => Uuid::uuid4()->toString(),
-                    'mac_address' => $value['macAddress'],
-                    'dhcp_entry_id' => $this->id,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ];
-            }
-
-            MacAddress::insert($macAddressData);
-
             $this->redirect(route('dhcp-entries'));
 
         } catch (Exception $e) {
@@ -116,17 +105,5 @@ class DhcpEntryCreate extends Component
                 $this->setErrorBag($this->validationErrors);
             }
         }
-    }
-
-    #[On('macAddressesUpdated')]
-    public function updateMacAddresses($macAddresses)
-    {
-        $this->macAddresses = $macAddresses;
-    }
-
-    #[On('updateValidationPassStatus')]
-    public function updateMacValidationStatus($validationPassStatus)
-    {
-        $this->macAddressValidationPasses = $validationPassStatus;
     }
 }

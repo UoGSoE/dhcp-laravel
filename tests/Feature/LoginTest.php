@@ -38,7 +38,7 @@ class LoginTest extends TestCase
 
     public function test_login_fails_when_data_is_invalid(): void
     {
-        config()->set('ldap.authentication', false);
+        $this->fakeLdapConnection();
 
         $response = $this->from(route('authenticate'))->post(route('authenticate'), [
             'guid' => 123,
@@ -51,29 +51,33 @@ class LoginTest extends TestCase
         ]);
     }
 
+    // FAILING
     public function test_login_succeeds_when_user_exists(): void
     {
-        config()->set('ldap.authentication', false);
+        $this->fakeLdapConnection();
 
         $userId = Uuid::uuid4()->toString();
-        $user = $this->createValidUser($userId);
+        $this->createValidUser($userId);
+
         $response = $this->setInputsAndSubmitForm();
         $response->assertHasNoErrors();
     }
 
+    // FAILING
     public function test_redirects_to_index_page_when_login_succeeds(): void
     {
-        config()->set('ldap.authentication', false);
+        $this->fakeLdapConnection();
 
         $userId = Uuid::uuid4()->toString();
-        $user = $this->createValidUser($userId);
+        $this->createValidUser($userId);
+
         $response = $this->setInputsAndSubmitForm();
         $response->assertRedirect(route('dhcp-entries'));
     }
 
     public function test_throws_error_to_user_when_login_fails(): void
     {
-        config()->set('ldap.authentication', false);
+        $this->fakeLdapConnection();
 
         $response = $this->setInputsAndSubmitForm();
         $response->assertHasErrors();
@@ -85,9 +89,8 @@ class LoginTest extends TestCase
             'id' => $id,
             'forenames' => 'Joe',
             'surname' => 'Bloggs',
-            'password' => bcrypt('password'),
             'email' => 'email@email.com',
-            'guid' => 'jb123'
+            'guid' => 'test.user'
         ];
 
         $user = User::create($userData);
@@ -99,8 +102,8 @@ class LoginTest extends TestCase
     private function setInputsAndSubmitForm(): Testable
     {
         $response = Livewire::test(Login::class)
-            ->set('guid', 'jb123')
-            ->set('password', 'password')
+            ->set('guid', 'test.user')
+            ->set('password', 'validpassword')
             ->call('authenticate');
 
         return $response;

@@ -28,8 +28,8 @@ class User extends Authenticatable
         'password', 'remember_token'
     ];
 
-    // public function getActivitylogOptions(): LogOptions
-    // {
-    //     return LogOptions::defaults();
-    // }
+    public function getFullNameAttribute()
+    {
+        return $this->forenames . ' ' . $this->surname;
+    }
 }

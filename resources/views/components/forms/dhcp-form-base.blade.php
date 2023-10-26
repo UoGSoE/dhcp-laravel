@@ -10,7 +10,27 @@
                     class="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
 
                     {{-- MAC addresses --}}
-                    @yield('mac-addresses-input')
+                    <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
+                        <label for="macAddress" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
+                            MAC Address
+                        </label>
+                        <div class="mt-2 sm:col-span-2 sm:mt-0">
+                            <div
+                                class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+
+                                @yield('mac-address-input')
+                            </div>
+
+                            @error('macAddress')
+                            <div class='error-message text-red-700 mt-3 flex items-center'>
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span class='px-2 text-sm'>
+                                    {{ $message}}
+                                </span>
+                            </div>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Owner (email address) --}}
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">

@@ -11,6 +11,7 @@ class DhcpEntryEdit extends Component
     public ?DhcpEntry $dhcpEntry;
 
     public string $id;
+    public ?string $macAddress;
     public ?string $hostname;
     public ?string $ipAddress;
     public ?string $owner;
@@ -18,25 +19,23 @@ class DhcpEntryEdit extends Component
     public ?bool $isSsd;
     public ?bool $isActive;
 
-    public $macAddresses;
-
-    public bool $macAddressValidationPasses;
+    public array $validationErrors = [];
 
     public function mount()
     {
         $this->dhcpEntry = Route::current()->parameter('dhcpEntry');
         $this->id = $this->dhcpEntry->id;
+        $this->macAddress = $this->dhcpEntry->mac_address;
         $this->hostname = $this->dhcpEntry->hostname;
         $this->ipAddress = $this->dhcpEntry->ip_address;
         $this->owner = $this->dhcpEntry->owner;
         $this->addedBy = $this->dhcpEntry->added_by;
         $this->isSsd = $this->dhcpEntry->is_ssd;
         $this->isActive = $this->dhcpEntry->is_active;
-        $this->macAddresses = $this->dhcpEntry->macAddresses;
     }
 
     public function render()
     {
-        return view('livewire.dhcp.dhcp-entry-edit', []);
+        return view('livewire.dhcp.dhcp-entry-edit');
     }
 }
