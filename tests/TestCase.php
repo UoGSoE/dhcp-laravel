@@ -23,6 +23,10 @@ class ImportLdapConnectionFake implements LdapConnectionInterface
 {
     public function authenticate(string $username, string $password)
     {
+        if ($username === 'test.user' && $password === 'validpassword') {
+            return true;
+        }
+
         return false;
     }
 

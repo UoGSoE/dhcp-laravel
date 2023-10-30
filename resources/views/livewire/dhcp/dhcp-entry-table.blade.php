@@ -1,11 +1,10 @@
-@php
-    $headers = [
+@props(['headers' => [
         'hostname' => [
             'property' => 'hostname',
             'label' => 'Hostname',
         ],
         'macAddresses' => [
-            'property' => '',
+            'property' => 'mac_address',
             'label' => 'MAC',
         ],
         'ip_address' => [
@@ -25,7 +24,7 @@
             'label' => 'Owner',
         ],
         'notes' => [
-            'property' => '',
+            'property' => 'notes.note',
             'label' => 'Notes',
         ],
         'ssd' => [
@@ -36,14 +35,10 @@
             'property' => 'is_active',
             'label' => 'Active',
         ]
-    ];
-@endphp
-
+    ]
+])
 
 <div class="px-4 sm:px-6 lg:px-8">
-
-{{-- {{ dump($dhcpEntries) }} --}}
-
     <div class="justify-around sm:flex sm:items-center">
         <div class="sm:flex-auto">
             <h1 class="text-base font-semibold leading-6 text-gray-900">DHCP Entries</h1>
@@ -146,7 +141,7 @@
                                     {{ $dhcpEntry->owner }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ $dhcpEntry->notes }}
+                                    {{ $dhcpEntry->notes->sortByDesc('updated_at')->first()->note ?? '' }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     <span>

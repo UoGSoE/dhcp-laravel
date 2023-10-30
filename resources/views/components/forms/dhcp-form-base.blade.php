@@ -67,7 +67,7 @@
                                 @yield('ip-address-input')
                             </div>
 
-                            @error('ip_address')
+                            @error('ipAddress')
                             <div class='error-message text-red-700 mt-3 flex items-center'>
                                 <i class="fa-solid fa-triangle-exclamation"></i>
                                 <span class='px-2 text-sm'>
@@ -125,12 +125,7 @@
 
                     {{-- Notes --}}
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-                        <label for="notes"
-                            class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">Notes</label>
-                        <div class="mt-2 sm:col-span-2 sm:mt-0">
-
-                            @yield('notes-input')
-                        </div>
+                        @yield('note-section')
                     </div>
 
                 </div>

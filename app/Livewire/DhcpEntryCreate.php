@@ -3,18 +3,24 @@
 namespace App\Livewire;
 
 use App\Models\DhcpEntry;
-use App\Services\InputValidationService;
-use Exception;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
-use Livewire\Attributes\On;
+use App\Models\Note;
+use Livewire\Attributes\Rule;
 use Livewire\Component;
-use Ohffs\Ldap\LdapService;
 use Ramsey\Uuid\Uuid;
 
 class DhcpEntryCreate extends Component
 {
+    #[Rule([
+        'macAddress' => 'required|unique:dhcp_entries,mac_address|mac_address',
+        'hostname' => 'required_unless:ipAddress,null|unique:dhcp_entries,hostname',
+        'ipAddress' => 'nullable|ip|unique:dhcp_entries,ip_address',
+        'owner' => 'required',
+        'addedBy' => 'required',
+        'isSsd' => 'required|boolean',
+        'isActive' => 'required|boolean',
+        'note' => 'nullable|string'
+    ])]
+
     public string $id;
     public string $macAddress = '';
     public string $hostname = '';
@@ -24,9 +30,7 @@ class DhcpEntryCreate extends Component
     public bool $isSsd = false;
     public bool $isActive = true;
 
-    public array $validationErrors = [];
-
-    public array $notes = [];
+    public string $note = "";
 
     public function mount()
     {
@@ -40,43 +44,22 @@ class DhcpEntryCreate extends Component
 
     public function updated($field): void
     {
-        // If IP address updated after validation, remove error
-        if ($field == 'ipAddress' && array_key_exists('ip_address', $this->validationErrors)) {
-            unset($this->validationErrors['ip_address']);
+        if ($field == 'ipAddress') {
+            $this->resetValidation('hostname');
         }
 
-        $this->validationErrors = InputValidationService::validateInput(
-            ['owner' => $this->owner, 'macAddress' => $this->macAddress],
-            ['owner' => 'required', 'macAddress' => 'required|mac_address'],
-            [
-                'required' => 'This field must not be empty',
-                'mac_address' => 'This field must be a valid MAC address'
-            ],
-            $field,
-            $this->validationErrors,
-        );
-
-        $this->setErrorBag($this->validationErrors);
+        $this->validateOnly($field);
     }
 
-    public function createDhcpEntry(LdapService $ldapService): void
+    public function createDhcpEntry(): void
     {
-        $this->addedBy = Auth::user()->getFullNameAttribute();
-        // $user = $ldapService->findUser(Auth::user()->guid);
-        // $this->addedBy = $user->username . ' (' . $user->forenames . ')';
+        $this->addedBy = auth()->user()->full_name;
 
         if (!$this->hostname || $this->hostname === '') {
             $this->hostname = 'eng-pool-' . $this->id;
         }
 
-        $this->validate([
-            'macAddress' => 'required',
-            'hostname' => 'required',
-            'owner' => 'required',
-            'addedBy' => 'required',
-            'isSsd' => 'required',
-            'isActive' => 'required',
-        ]);
+        $this->validate();
 
         $dhcpEntryData = [
             'id' => $this->id,
@@ -89,21 +72,14 @@ class DhcpEntryCreate extends Component
             'is_active' => $this->isActive
         ];
 
-        $dhcpEntry = new DhcpEntry($dhcpEntryData);
+        $noteData = [
+            'note' => strip_tags($this->note),
+            'created_by' => $this->addedBy,
+        ];
 
-        try {
-            $dhcpEntry->save();
+        $dhcpEntry = DhcpEntry::create($dhcpEntryData);
+        $dhcpEntry->notes()->create($noteData);
 
-            $this->redirect(route('dhcp-entries'));
-
-        } catch (Exception $e) {
-            if ($e instanceof ValidationException) {
-                $errors = $e->validator->getMessageBag()->getMessages();
-                foreach ($errors as $key => $error) {
-                    $this->validationErrors[$key] = $error;
-                }
-                $this->setErrorBag($this->validationErrors);
-            }
-        }
+        $this->redirect(route('dhcp-entries'));
     }
 }

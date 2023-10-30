@@ -52,7 +52,10 @@ class DhcpEntryTable extends Component
     public function render()
     {
         return view('livewire.dhcp.dhcp-entry-table', [
-            'dhcpEntries' => DhcpEntry::with(['notes'])
+            'dhcpEntries' => DhcpEntry::leftJoin('notes', function ($join) {
+                $join->on('dhcp_entries.id', '=', 'notes.dhcp_entry_id');
+                $join->whereRaw('notes.updated_at = (select max(`updated_at`) from notes where notes.dhcp_entry_id = dhcp_entries.id)');
+            })->select('dhcp_entries.*', 'notes.note')
                 ->where(function ($query) {
                     $query->where('mac_address', 'like', '%' . $this->search . '%')
                     ->orWhere('hostname', 'like', '%' . $this->search . '%')

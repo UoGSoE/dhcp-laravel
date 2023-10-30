@@ -51,7 +51,6 @@ class LoginTest extends TestCase
         ]);
     }
 
-    // FAILING
     public function test_login_succeeds_when_user_exists(): void
     {
         $this->fakeLdapConnection();
@@ -63,7 +62,6 @@ class LoginTest extends TestCase
         $response->assertHasNoErrors();
     }
 
-    // FAILING
     public function test_redirects_to_index_page_when_login_succeeds(): void
     {
         $this->fakeLdapConnection();
