@@ -80,20 +80,70 @@
 
 @section('note-section')
     <label for="note" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">Notes</label>
-    <div class="mt-2 sm:col-span-2 sm:mt-0">
-        <textarea
-            wire:model.live="note"
-            placeholder="Add note here..."
-            id="note"
-            name="note"
-            rows="3"
-            class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-        </textarea>
-    </div>
+
+    <ul class="flex flex-col gap-y-4 mt-2 sm:col-span-2 sm:mt-0">
+        @if ($notes)
+            @foreach ($notes->sortBy('updated_at') as $note)
+                <li wire:key="{{ $note->id }}"
+                    class="flex flex-col sm:max-w-md [&:nth-last-child(n+3)]:border-b-2">
+
+                    {{-- Note user and dates --}}
+                    <div class="flex flex-col gap-y-1">
+                        {{-- Note user, edit/delete --}}
+                        <div class="flex items-center gap-1 gap-x-3 justify-between">
+                            <p class="text-sm font-semibold leading-6 text-gray-900">
+                                {{ $note->created_by }}
+                            </p>
+
+                            {{-- Note edit/delete functionality currently not needed --}}
+                            {{-- TODO - if functionality included, fix wire.confirm --}}
+                            {{-- <div class="flex flex-row gap-x-6 text-gray-600">
+                                <i wire:click.prevent="editNote({{ $note }})"
+                                    class="fa-solid fa-pencil w-1 hover:cursor-pointer"></i>
+                                <i wire:click="deleteNote('{{ $note->id }}')" wire:confirm="Are you sure you want to delete this note?"
+                                    class="fa-solid fa-trash w-1 hover:cursor-pointer"></i>
+                            </div> --}}
+
+                        </div>
+
+                        {{-- Note created + edit dates --}}
+                        <div class="flex gap-x-4 flex-row line-clamp-1 text-sm text-gray-600">
+                            <p class="flex-none">
+                                {{ $note->created_at->format('d-m-Y H:i') }}
+                            </p>
+                            @if ($note->updated_at != $note->created_at)
+                            <p class="flex-none italic">
+                                Edited: {{ $note->updated_at->format('d-m-Y H:i') }}
+                            </p>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Note text --}}
+                    <p class="mt-4 pb-4 text-md leading-6 text-gray-600"> {{ $note->note }}</p>
+                </li>
+            @endforeach
+        @endif
+
+        <li class="sm:max-w-md">
+            <textarea
+                wire:model.live="note"
+                placeholder="Add note here..."
+                id="note"
+                name="note"
+                rows="3"
+                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </textarea>
+        </li>
+    </ul>
 @endsection
 
 @section('save-cancel-buttons')
-    <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+    <button type="button" class="text-sm font-semibold leading-6 text-gray-900">
+        <a href="{{ route('dhcp-entries')}}">
+            Cancel
+        </a>
+    </button>
     <button
         wire:click.prevent="saveDhcpEntry"
         type="submit"

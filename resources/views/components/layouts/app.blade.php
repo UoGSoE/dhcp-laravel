@@ -1,41 +1,44 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    class="h-full"
+>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {{-- CSRF --}}
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+        {{-- CSRF --}}
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Laravel</title>
+        <title>Laravel</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
-    <!-- Styles -->
-    @vite(['resources/js/app.js'])
-    @livewireStyles
+        <!-- Styles -->
+        @vite(['resources/js/app.js'])
+        @livewireStyles
 
-</head>
+    </head>
 
-<body>
-    <div id="app">
-        @isset ($slot)
-            {{ $slot }}
-        @endisset
+    <body class="w-full h-full max-w-full max-h-full">
+        <div id="app" class="{{ auth()->guest() ? '' : 'flex flex-row w-full h-full' }}">
+            @auth
+                <div class="h-full">
+                    @include('components.layouts.navigation')
+                </div>
+            @endauth
 
-        @yield('content')
-    </div>
+            <div class="w-full mt-12 px-4 sm:px-6 lg:px-8">
+                @isset ($slot)
+                    {{ $slot }}
+                @endisset
+            </div>
+        </div>
 
-    <!-- Scripts -->
-    @livewireScripts
-    <script src="{{ asset('js/app.js') }}"></script>
-
-    @if (app()->environment('local'))
-        {!! Debugbar::render() !!}
-    @endif
-</body>
-
+        <!-- Scripts -->
+        @livewireScripts
+        <script src="{{ asset('js/app.js') }}"></script>
+    </body>
 </html>

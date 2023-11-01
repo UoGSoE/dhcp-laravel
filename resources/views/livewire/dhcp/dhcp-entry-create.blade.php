@@ -88,7 +88,11 @@
 @endsection
 
 @section('save-cancel-buttons')
-    <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+    <button type="button" class="text-sm font-semibold leading-6 text-gray-900">
+            <a href="{{ route('dhcp-entries')}}">
+                Cancel
+            </a>
+    </button>
     <button wire:click.prevent="createDhcpEntry()" type="submit"
         @if (count($errors) > 0)
             aria-disabled

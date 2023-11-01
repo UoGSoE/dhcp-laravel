@@ -30,7 +30,7 @@ class DhcpEntryCreate extends Component
     public bool $isSsd = false;
     public bool $isActive = true;
 
-    public string $note = "";
+    public ?string $note = null;
 
     public function mount()
     {
@@ -72,12 +72,18 @@ class DhcpEntryCreate extends Component
             'is_active' => $this->isActive
         ];
 
+        $dhcpEntry = DhcpEntry::create($dhcpEntryData);
+
+        if (!$this->note || $this->note == "") {
+            $this->redirect(route('dhcp-entries'));
+            return;
+        }
+
         $noteData = [
             'note' => strip_tags($this->note),
             'created_by' => $this->addedBy,
         ];
 
-        $dhcpEntry = DhcpEntry::create($dhcpEntryData);
         $dhcpEntry->notes()->create($noteData);
 
         $this->redirect(route('dhcp-entries'));
