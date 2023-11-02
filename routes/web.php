@@ -21,8 +21,8 @@ Route::post('/authenticate', [\App\Livewire\Login::class, 'authenticate'])->name
 
 Route::middleware('auth')->group(function () {
     Route::get('/', \App\Livewire\DhcpEntryTable::class)->name('index');
-
     Route::get('/dhcp-entries', \App\Livewire\DhcpEntryTable::class)->name('dhcp-entries');
     Route::get('/dhcp-entry/create', \App\Livewire\DhcpEntryCreate::class)->name('dhcp-entry.create');
     Route::get('/dhcp-entry/{dhcpEntry}/edit', \App\Livewire\DhcpEntryEdit::class)->name('dhcp-entry.edit');
+    Route::get('/dhcp-entry/config', \App\Livewire\DhcpConfigForm::class)->name('dhcp-config');
 });

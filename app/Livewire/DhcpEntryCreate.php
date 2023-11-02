@@ -39,7 +39,7 @@ class DhcpEntryCreate extends Component
 
     public function render()
     {
-        return view('livewire.dhcp.dhcp-entry-create');
+        return view('livewire.dhcp-entry.dhcp-entry-create');
     }
 
     public function updated($field): void

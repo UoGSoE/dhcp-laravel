@@ -20,21 +20,9 @@
             'icon' => '',
             'route' => 'dhcp-entry.create',
         ],
-        'Edit DHCP header' => [
+        'Edit DHCP config' => [
             'icon' => '',
-            'route' => 'dhcp-entry.create',
-        ],
-        'Edit DHCP subnets' => [
-            'icon' => '',
-            'route' => 'dhcp-entry.create',
-        ],
-        'Edit DHCP groups' => [
-            'icon' => '',
-            'route' => 'dhcp-entry.create',
-        ],
-        'Edit DHCP footer' => [
-            'icon' => '',
-            'route' => 'dhcp-entry.create',
+            'route' => 'dhcp-config',
         ],
         'Logout' => [
             'icon' => 'fa-right-from-bracket',

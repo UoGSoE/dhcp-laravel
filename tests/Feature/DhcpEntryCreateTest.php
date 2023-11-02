@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class DhcpEntryTest extends TestCase
+class DhcpEntryCreateTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -85,6 +85,8 @@ class DhcpEntryTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get(route('dhcp-entry.create'));
+
+        $response->assertStatus(200);
         $response->assertSeeLivewire(DhcpEntryCreate::class);
     }
 

@@ -93,7 +93,7 @@
                 Cancel
             </a>
     </button>
-    <button wire:click.prevent="createDhcpEntry()" type="submit"
+    <button wire:click.prevent="createDhcpEntry" type="submit"
         @if (count($errors) > 0)
             aria-disabled
             disabled

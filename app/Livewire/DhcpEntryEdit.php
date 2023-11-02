@@ -66,7 +66,7 @@ class DhcpEntryEdit extends Component
 
     public function render()
     {
-        return view('livewire.dhcp.dhcp-entry-edit');
+        return view('livewire.dhcp-entry.dhcp-entry-edit');
     }
 
     public function updated($field): void
