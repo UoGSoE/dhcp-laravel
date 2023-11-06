@@ -7,78 +7,12 @@ use App\Livewire\Homepage;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class DhcpEntryCreateTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function test_dhcp_entry_can_be_created(): void
-    {
-        $user = User::factory()->make();
-
-        $response = Livewire::actingAs($user)->test(DhcpEntryCreate::class)
-            ->set('hostname', 'test-hostname')
-            ->set('ip_address', '192.168.0.1')
-            ->set('owner', 'test-owner')
-            ->set('added_by', 'test-added-by')
-            ->set('is_ssd', false)
-            ->set('is_active', true)
-            ->call('createDhcpEntry')
-            ->assertHasNoErrors(
-                'hostname',
-                'ip_address',
-                'owner',
-                'added_by',
-                'is_ssd',
-                'is_active'
-            )
-            ->assertStatus(200);
-
-        tap(\App\Models\DhcpEntry::first(), function ($dhcpEntry) {
-            $this->assertEquals('test-hostname', $dhcpEntry->hostname);
-        });
-
-        $this->assertDatabaseHas('dhcp_entries', [
-            'hostname' => 'test-hostname',
-            'ip_address' => '192.168.0.1',
-            'owner' => 'test-owner',
-            'added_by' => 'test-added-by',
-            'is_ssd' => false,
-            'is_active' => true
-        ]);
-    }
-
-    public function test_dhcp_entry_fails_when_data_is_valid(): void
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $response = Livewire::test(DhcpEntryCreate::class)
-            ->set('hostname', 'test-hostname-123')
-            ->set('ip_address', '')
-            ->set('owner', '')
-            ->set('added_by', '')
-            ->set('is_ssd', '')
-            ->set('is_active', '')
-            ->call('createDhcpEntry')
-            ->assertHasErrors(
-                'ip_address',
-                'owner',
-                'added_by',
-                'is_ssd',
-                'is_active'
-            );
-
-        $this->assertDatabaseMissing('dhcp_entries', [
-            'hostname' => 'test-hostname-123',
-            'ip_address' => '',
-            'owner' => '',
-            'added_by' => '',
-            'is_ssd' => '',
-            'is_active' => ''
-        ]);
-    }
 
     public function test_livewire_component_is_rendered(): void
     {
@@ -90,4 +24,78 @@ class DhcpEntryCreateTest extends TestCase
         $response->assertSeeLivewire(DhcpEntryCreate::class);
     }
 
+    public function test_dhcp_entry_and_note_can_be_created(): void
+    {
+        $user = User::factory()->make();
+        $dhcpEntryId = '23a21296-cde5-4f41-9edf-e5cbbc71c43f';
+
+        $response = Livewire::actingAs($user)->test(DhcpEntryCreate::class)
+            ->set('id', $dhcpEntryId)
+            ->set('macAddress', '20:20:20:20:20:20')
+            ->set('hostname', 'test-hostname')
+            ->set('ipAddress', '192.168.0.1')
+            ->set('owner', 'test-owner')
+            ->set('isSsd', true)
+            ->set('isActive', false)
+            ->set('note', 'This is a test note.')
+            ->call('createDhcpEntry')
+            ->assertHasNoErrors(
+                'macAddress',
+                'hostname',
+                'ip_address',
+                'owner',
+                'added_by',
+                'is_ssd',
+                'is_active',
+                'note'
+            )
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('dhcp_entries', [
+            'mac_address' => '20:20:20:20:20:20',
+            'hostname' => 'test-hostname',
+            'ip_address' => '192.168.0.1',
+            'owner' => 'test-owner',
+            'is_ssd' => 1,
+            'is_active' => 0
+        ]);
+
+        $this->assertDatabaseHas('notes', [
+            'note' => 'This is a test note.',
+            'dhcp_entry_id' => $dhcpEntryId
+        ]);
+    }
+
+    public function test_dhcp_entry_fails_when_data_is_invalid(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $response = Livewire::test(DhcpEntryCreate::class)
+            ->set('hostname', 'test-hostname-123')
+            ->set('macAddress', 123)
+            ->set('ipAddress', '')
+            ->set('owner', '')
+            ->set('added_by', null)
+            ->set('isSsd', '')
+            ->set('isActive', '')
+            ->call('createDhcpEntry')
+            ->assertHasErrors(
+                'macAddress',
+                'ipAddress',
+                'owner',
+                'addedBy',
+                'isSsd',
+                'isActive'
+            );
+
+        $this->assertDatabaseMissing('dhcp_entries', [
+            'hostname' => 'test-hostname-123',
+            'ip_address' => '',
+            'owner' => '',
+            'added_by' => '',
+            'is_ssd' => '',
+            'is_active' => ''
+        ]);
+    }
 }

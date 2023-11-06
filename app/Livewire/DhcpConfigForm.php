@@ -32,7 +32,6 @@ class DhcpConfigForm extends Component
         $this->footer = $dhcpConfig->footer;
 
         session()->flash('success', 'DHCP config saved successfully.');
-
     }
 
     public function render()
@@ -42,6 +41,13 @@ class DhcpConfigForm extends Component
 
     public function saveDhcpConfig()
     {
+        $this->validate([
+            'header' => 'string|nullable',
+            'subnets' => 'string|nullable',
+            'groups' => 'string|nullable',
+            'footer' => 'string|nullable',
+        ]);
+
         $dhcpConfigData = [
             'header' => $this->header ? strip_tags($this->header) : $this->header,
             'subnets' => $this->subnets ? strip_tags($this->subnets) : $this->subnets,
@@ -52,10 +58,6 @@ class DhcpConfigForm extends Component
         if (!$this->dhcpConfig) {
             $this->dhcpConfig = DhcpConfig::create();
         }
-
-        // $dhcpConfig = DhcpConfig::findOr(1, function () {
-        //     return DhcpConfig::create();
-        // });
 
         $this->dhcpConfig->update($dhcpConfigData);
 

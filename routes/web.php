@@ -25,4 +25,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/dhcp-entry/create', \App\Livewire\DhcpEntryCreate::class)->name('dhcp-entry.create');
     Route::get('/dhcp-entry/{dhcpEntry}/edit', \App\Livewire\DhcpEntryEdit::class)->name('dhcp-entry.edit');
     Route::get('/dhcp-entry/config', \App\Livewire\DhcpConfigForm::class)->name('dhcp-config');
+    Route::get('/logout', [\App\Http\Controllers\LogoutController::class, 'logout'])->name('logout');
 });

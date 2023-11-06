@@ -26,7 +26,7 @@
         ],
         'Logout' => [
             'icon' => 'fa-right-from-bracket',
-            'route' => 'dhcp-entry.create',
+            'route' => 'logout',
         ],
     ]
 ])
