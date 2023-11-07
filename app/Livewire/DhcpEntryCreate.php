@@ -86,6 +86,8 @@ class DhcpEntryCreate extends Component
 
         $dhcpEntry->notes()->create($noteData);
 
+        session()->flash('success', 'DHCP entry created successfully.');
+
         $this->redirect(route('dhcp-entries'));
     }
 }

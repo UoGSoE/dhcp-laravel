@@ -1,4 +1,9 @@
 <div>
+
+    @if (session()->has('success'))
+        @include('components.alerts.success', ['message' => session('success')])
+    @endif
+
     <form>
         <div class="space-y-12 sm:space-y-16">
             <div>
