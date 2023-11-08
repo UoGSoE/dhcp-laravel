@@ -86,6 +86,13 @@
                 <table class="min-w-full divide-y divide-gray-300">
                     <thead>
                         <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                                <input
+                                    wire:model.live="selectAll"
+                                    type="checkbox"
+                                    />
+                            </th>
+
                             @foreach ($headers as $header)
                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
                                     <a
@@ -121,7 +128,16 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
                         @foreach ($dhcpEntries as $dhcpEntry)
-                            <tr>
+                            <tr wire:key="{{ $dhcpEntry->id }}" >
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                                    <input
+                                        wire:model.live="selected"
+                                        type="checkbox"
+                                        value="{{ $dhcpEntry->id }}"
+                                        @checked(in_array($dhcpEntry->id, $selected))
+                                    />
+                                </td>
+
                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                                     {{ $dhcpEntry->hostname }}
                                 </td>
