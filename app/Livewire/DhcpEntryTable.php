@@ -19,8 +19,9 @@ class DhcpEntryTable extends Component
     public ?bool $active = null;
     // protected $queryString = ['search', 'perPage', 'sortField', 'sortAsc', 'active',];
 
-    public bool $selectAll = false;
+    public bool $selectPage = false;
     public array $selected = [];
+    public bool $selectAll = false;
 
     public function sortBy($field): void
     {
@@ -68,22 +69,38 @@ class DhcpEntryTable extends Component
                 })->when($this->active !== null, function ($query) {
                     $query->where('is_active', $this->active);
                 })
-                ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                ->paginate($this->perPage);
+                ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc');
     }
 
     public function render()
     {
+        if ($this->selectAll) {
+            $this->selected = $this->results->get()->pluck('id')->map(fn ($id) => (string) $id)->toArray();
+        }
+
         return view('livewire.dhcp-entry.dhcp-entry-table', [
-            'dhcpEntries' => $this->results,
+            'dhcpEntries' => $this->results->paginate($this->perPage),
         ]);
 
     }
 
-    public function updatedSelectAll(bool $value)
+    public function updatedselectPage(bool $value)
     {
         $this->selected = $value
-            ? $this->results->pluck('id')->map(fn ($id) => (string) $id)->toArray()
+            ? $this->results->paginate($this->perPage)->pluck('id')->map(fn ($id) => (string) $id)->toArray()
             : [];
+    }
+
+    public function selectAllEntries()
+    {
+        $this->selectAll = true;
+    }
+
+    public function updatedSelected($value)
+    {
+        if (in_array($value, $this->selected)) {
+            $this->selectAll = false;
+            $this->selectPage = false;
+        }
     }
 }

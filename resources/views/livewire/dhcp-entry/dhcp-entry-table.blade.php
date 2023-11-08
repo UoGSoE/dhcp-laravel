@@ -39,6 +39,9 @@
 ])
 
 <div class="w-full">
+
+    @dump($this->selected)
+
     <div class="justify-around sm:flex sm:items-center">
         <div class="sm:flex-auto">
             <h1 class="text-base font-semibold leading-6 text-gray-900">DHCP Entries</h1>
@@ -83,12 +86,29 @@
     <div class="mt-8 flow-root">
         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+
+                <div class="mb-4">
+
+                    @if ($selectPage)
+                        @unless ($selectAll)
+                            You selected <strong>{{ count($selected) }}</strong> entries, would you like to select <strong>{{ $dhcpEntries->total() }}</strong> entries?
+                            <button wire:click="selectAllEntries" class="btn text-blue-600">
+                                Select All
+                            </button>
+                        @else
+                            You have selected all <strong>{{ $dhcpEntries->total() }}</strong> entries.
+                        @endunless
+                    @endif
+
+                </div>
+
+
                 <table class="min-w-full divide-y divide-gray-300">
                     <thead>
                         <tr>
                             <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
                                 <input
-                                    wire:model.live="selectAll"
+                                    wire:model.live="selectPage"
                                     type="checkbox"
                                     />
                             </th>
