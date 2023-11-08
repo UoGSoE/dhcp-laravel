@@ -86,17 +86,4 @@ class DhcpEntryTable extends Component
             ? $this->results->pluck('id')->map(fn ($id) => (string) $id)->toArray()
             : [];
     }
-
-    public function selectRow(string $id): void
-    {
-        if (!in_array($id, $this->selected)) {
-            $this->selected[] = $id;
-            return;
-        }
-
-        $key = array_search($id, $this->selected);
-        if (array_key_exists($key, $this->selected)) {
-            $this->selected = array_values(array_diff($this->selected, [$id]));
-        }
-    }
 }
