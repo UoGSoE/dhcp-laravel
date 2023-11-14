@@ -12,7 +12,7 @@ class DhcpEntryTable extends Component
     use WithPagination;
 
     public string $search = '';
-    public int $perPage = 10;
+    public int $perPage = 5;
     public string $sortField = 'created_at';
     public bool $sortAsc = true;
     public string $activeFilter = "";
@@ -102,5 +102,19 @@ class DhcpEntryTable extends Component
             $this->selectAll = false;
             $this->selectPage = false;
         }
+    }
+
+    public function deleteDhcpEntry(DhcpEntry $dhcpEntry)
+    {
+        $dhcpEntry->delete();
+    }
+
+    public function deleteSelected(array $selected)
+    {
+        if (empty($selected)) {
+            return;
+        }
+
+        DhcpEntry::destroy($selected);
     }
 }

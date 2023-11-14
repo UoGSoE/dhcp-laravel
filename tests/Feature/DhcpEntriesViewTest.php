@@ -14,11 +14,15 @@ class DhcpEntriesViewTest extends TestCase
 {
     use RefreshDatabase;
 
+    public ?DhcpEntry $dhcpEntry1 = null;
+    public ?DhcpEntry $dhcpEntry2 = null;
+    public ?DhcpEntry $dhcpEntry3 = null;
+
     public function setUp(): void
     {
         parent::setUp();
 
-        DhcpEntry::factory()->create([
+        $this->dhcpEntry1 = DhcpEntry::factory()->create([
             'hostname' => 'test-hostname',
             'mac_address' => '20:20:20:20:20:20',
             'ip_address' => null,
@@ -28,7 +32,7 @@ class DhcpEntriesViewTest extends TestCase
             'is_active' => false
         ]);
 
-        DhcpEntry::factory()->create([
+        $this->dhcpEntry2 = DhcpEntry::factory()->create([
             'hostname' => 'hostname-number-two',
             'mac_address' => '20:20:20:20:20:21',
             'ip_address' => '192.168.0.1',
@@ -37,6 +41,16 @@ class DhcpEntriesViewTest extends TestCase
             'is_ssd' => false,
             'is_active' => true
         ]);
+
+        $this->dhcpEntry3 = DhcpEntry::factory()->create([
+            'hostname' => 'hostname-number-three-test',
+            'mac_address' => '20:20:20:20:20:22',
+            'owner' => 'c@c.com',
+            'added_by' => 'Test User',
+            'is_ssd' => false,
+            'is_active' => false
+        ]);
+
     }
 
     public function test_livewire_component_is_rendered(): void
@@ -50,7 +64,7 @@ class DhcpEntriesViewTest extends TestCase
     }
 
 
-    public function test_table_is_searchable()
+    public function test_table_is_searchable(): void
     {
         Livewire::test(DhcpEntryTable::class)
             ->assertSee('test-hostname')
@@ -60,7 +74,7 @@ class DhcpEntriesViewTest extends TestCase
             ->assertDontSee('hostname-number-two');
     }
 
-    public function test_table_filters_active_and_inactive_entries()
+    public function test_table_filters_active_and_inactive_entries(): void
     {
         Livewire::test(DhcpEntryTable::class)
             // Active filter is set to "All" by default
@@ -76,7 +90,7 @@ class DhcpEntriesViewTest extends TestCase
             ->assertSee('test-hostname');
     }
 
-    public function test_table_sorts_correctly()
+    public function test_table_sorts_correctly(): void
     {
         Livewire::test(DhcpEntryTable::class)
             ->call('sortBy', 'hostname')
@@ -85,5 +99,28 @@ class DhcpEntriesViewTest extends TestCase
             ->set('sortAsc', true)
             ->call('sortBy', 'owner')
             ->assertSeeInOrder(['a@a.com', 'b@b.com']);
+    }
+
+    public function test_entry_delete(): void
+    {
+        Livewire::test(DhcpEntryTable::class)
+            ->call('deleteDhcpEntry', $this->dhcpEntry1->id)
+            ->assertDontSee('test-hostname');
+
+        $this->assertDatabaseMissing('dhcp_entries', [
+            'id' => $this->dhcpEntry1->id,
+            'hostname' => 'test-hostname'
+        ]);
+    }
+
+    public function test_multiple_entry_delete(): void
+    {
+        Livewire::test(DhcpEntryTable::class)
+            ->call('deleteSelected', [$this->dhcpEntry1->id, $this->dhcpEntry2->id])
+            ->assertSee('hostname-number-three-test')
+            ->assertDontSee('test-hostname')
+            ->assertDontSee('hostname-number-two');
+
+        $this->assertDatabaseCount('dhcp_entries', 1);
     }
 }

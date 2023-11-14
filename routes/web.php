@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExportController;
 use App\Livewire\DhcpEntryCreate;
 use App\Livewire\DhcpEntryTable;
 use App\Livewire\Index;
@@ -26,4 +27,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dhcp-entry/{dhcpEntry}/edit', \App\Livewire\DhcpEntryEdit::class)->name('dhcp-entry.edit');
     Route::get('/dhcp-entry/config', \App\Livewire\DhcpConfigForm::class)->name('dhcp-config');
     Route::get('/logout', [\App\Http\Controllers\LogoutController::class, 'logout'])->name('logout');
+    Route::get('/export-csv', [\App\Http\Controllers\ExportController::class, 'exportCsv'])->name('export-csv');
+    Route::get('/export-json', [\App\Http\Controllers\ExportController::class, 'exportJson'])->name('export-json');
 });

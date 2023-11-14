@@ -2,7 +2,7 @@
     'items' => [
         'Home' => [
             'icon' => 'fa-house',
-            'route' => 'index',
+            'route' => 'dhcp-entries',
         ],
         'Import CSV' => [
             'icon' => '',
@@ -10,11 +10,11 @@
         ],
         'Export CSV' => [
             'icon' => '',
-            'route' => 'dhcp-entry.create',
+            'route' => 'export-csv',
         ],
         'Export JSON' => [
             'icon' => '',
-            'route' => 'dhcp-entry.create',
+            'route' => 'export-json',
         ],
         'Subnet usage' => [
             'icon' => '',

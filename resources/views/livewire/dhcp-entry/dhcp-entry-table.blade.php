@@ -39,22 +39,50 @@
 ])
 
 <div class="w-full">
-
-    @dump($this->selected)
-
     <div class="justify-around sm:flex sm:items-center">
         <div class="sm:flex-auto">
             <h1 class="text-base font-semibold leading-6 text-gray-900">DHCP Entries</h1>
             <p class="mt-2 text-sm text-gray-700">DHCP entry list</p>
         </div>
-        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <a href="{{ route('dhcp-entry.create') }}">
-                <button type="button"
-                class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    Add DHCP entry
-                </button>
-            </a>
+        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row gap-4">
+            <div class="">
+                <a href="{{ route('dhcp-entry.create') }}">
+                    <button type="button"
+                        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Add DHCP entry
+                    </button>
+                </a>
+            </div>
+
+            @if (count($this->selected) > 1)
+
+                {{-- <div class="">
+                    <button
+                        wire:click="$dispatch('openModal', {component: 'dhcp-edit-modal', arguments: {selected: {{ json_encode($this->selected) }} }})"
+                        type="button"
+                        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Edit selected
+                    </button>
+                </div> --}}
+
+                <div class="">
+
+                    <button
+                        wire:click="deleteSelected({{ json_encode($this->selected) }})"
+                        wire:confirm="Are you sure you want to delete these entries?"
+                        type="button"
+                        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Delete selected
+                    </button>
+
+                </div>
+
+            @endif
+
+
         </div>
+
+
     </div>
 
 
@@ -91,6 +119,7 @@
 
                     @if ($selectPage)
                         @unless ($selectAll)
+
                             You selected <strong>{{ count($selected) }}</strong> entries, would you like to select <strong>{{ $dhcpEntries->total() }}</strong> entries?
                             <button wire:click="selectAllEntries" class="btn text-blue-600">
                                 Select All
@@ -141,7 +170,11 @@
                             @endforeach
 
                             <th scope="col" class="relative py-3.5 pl-3 pr-0">
-                                <span class="sr-only">Edit</span>
+                                <span class="sr-only">Edit/View</span>
+                            </th>
+
+                            <th scope="col" class="relative py-3.5 pl-3 pr-0">
+                                <span class="sr-only">Delete</span>
                             </th>
 
                         </tr>
@@ -159,25 +192,38 @@
                                 </td>
 
                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                    {{ $dhcpEntry->hostname }}
+                                    @if ($dhcpEntry->hostname)
+                                        {{ $dhcpEntry->hostname }}
+                                    @endif
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    <div>{{ $dhcpEntry->mac_address }}</div>
+                                    <div>
+                                        @if ($dhcpEntry->mac_address)
+                                            {{ $dhcpEntry->mac_address }}</div>
+                                        @endif
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ $dhcpEntry->ip_address }}
+                                    @if ($dhcpEntry->ip_address)
+                                        {{ $dhcpEntry->ip_address }}
+                                    @endif
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ $dhcpEntry->created_at->format('d/m/Y h:i') }}
+                                    @if ($dhcpEntry->created_at)
+                                        {{ $dhcpEntry->created_at->format('d/m/Y h:i') }}
+                                    @endif
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ $dhcpEntry->added_by }}
+                                    @if ($dhcpEntry->added_by)
+                                        {{ $dhcpEntry->added_by }}
+                                    @endif
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ $dhcpEntry->owner }}
+                                    @if ($dhcpEntry->owner)
+                                        {{ $dhcpEntry->owner }}
+                                    @endif
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ $dhcpEntry->notes->sortByDesc('updated_at')->first()->note ?? '' }}
+                                        {{ $dhcpEntry->notes->sortByDesc('updated_at')->first()->note ?? '' }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     <span>
@@ -194,10 +240,20 @@
                                     {{ $dhcpEntry->is_active ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
-                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
-                                    <a href="{{ route('dhcp-entry.edit', $dhcpEntry->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit
-                                        <span class="sr-only"></span>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <a href="{{ route('dhcp-entry.edit', $dhcpEntry->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit/View
+                                        <span class="sr-only">Edit/View</span>
                                     </a>
+                                </td>
+
+                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                                    <button
+                                        wire:click="deleteDhcpEntry('{{ $dhcpEntry->id }}')"
+                                        wire:confirm="Are you sure you want to delete this entry?"
+                                        class="hover:text-indigo-900 text-gray-600">
+                                        <i class="fa-solid fa-trash"></i>
+                                        <span class="sr-only">Delete</span>
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach

@@ -38,6 +38,7 @@
         </div>
 
         <!-- Scripts -->
+        @livewire('wire-elements-modal')
         @livewireScripts
         <script src="{{ asset('js/app.js') }}"></script>
     </body>
