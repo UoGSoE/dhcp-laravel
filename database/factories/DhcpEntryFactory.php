@@ -17,6 +17,7 @@ class DhcpEntryFactory extends Factory
             'added_by' => $this->faker->name(),
             'is_ssd' => $this->faker->boolean(),
             'is_active' => $this->faker->boolean(),
+            'is_imported' => $this->faker->boolean(),
         ];
     }
 }

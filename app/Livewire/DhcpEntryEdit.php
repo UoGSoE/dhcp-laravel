@@ -22,6 +22,7 @@ class DhcpEntryEdit extends Component
     public ?string $addedBy;
     public ?bool $isSsd;
     public ?bool $isActive;
+    public ?bool $isImported;
     public ?string $note = null;
     public Collection $notes;
 
@@ -46,6 +47,7 @@ class DhcpEntryEdit extends Component
             'addedBy' => 'required',
             'isSsd' => 'required|boolean',
             'isActive' => 'required|boolean',
+            'isImported' => 'required|boolean',
             'note' => 'nullable|string'
         ];
     }
@@ -61,6 +63,7 @@ class DhcpEntryEdit extends Component
         $this->addedBy = $dhcpEntry->added_by;
         $this->isSsd = $dhcpEntry->is_ssd;
         $this->isActive = $dhcpEntry->is_active;
+        $this->isImported = $dhcpEntry->is_imported;
         $this->notes = $dhcpEntry->notes;
     }
 
@@ -96,7 +99,8 @@ class DhcpEntryEdit extends Component
             'owner' => $this->owner,
             'added_by' => $this->addedBy,
             'is_ssd' => $this->isSsd,
-            'is_active' => $this->isActive
+            'is_active' => $this->isActive,
+            'is_imported' => $this->isImported,
         ];
 
         $dhcpEntry = DhcpEntry::findOrFail($this->id);

@@ -6,7 +6,7 @@
         ],
         'Import CSV' => [
             'icon' => '',
-            'route' => 'dhcp-entries',
+            'route' => 'import-csv.index',
         ],
         'Export CSV' => [
             'icon' => '',

@@ -18,6 +18,7 @@ class DhcpEntryCreate extends Component
         'addedBy' => 'required',
         'isSsd' => 'required|boolean',
         'isActive' => 'required|boolean',
+        'isImported' => 'required|boolean',
         'note' => 'nullable|string'
     ])]
 
@@ -29,6 +30,7 @@ class DhcpEntryCreate extends Component
     public string $addedBy = '';
     public bool $isSsd = false;
     public bool $isActive = true;
+    public bool $isImported = false;
 
     public ?string $note = null;
 
@@ -69,7 +71,8 @@ class DhcpEntryCreate extends Component
             'owner' => $this->owner,
             'added_by' => $this->addedBy,
             'is_ssd' => $this->isSsd,
-            'is_active' => $this->isActive
+            'is_active' => $this->isActive,
+            'is_imported' => $this->isImported,
         ];
 
         $dhcpEntry = DhcpEntry::create($dhcpEntryData);

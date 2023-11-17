@@ -34,6 +34,10 @@
         'active' => [
             'property' => 'is_active',
             'label' => 'Active',
+        ],
+        'imported' => [
+            'property' => 'is_imported',
+            'label' => 'Imported',
         ]
     ]
 ])
@@ -238,6 +242,15 @@
                                     <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
                                     {{ $dhcpEntry->is_active ? ' bg-green-50 text-green-700 ring-green-600/20' : ' bg-red-50 text-red-700 ring-red-600/20'}}">
                                     {{ $dhcpEntry->is_active ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <span>
+                                        @if ($dhcpEntry->is_imported)
+                                        <i class="fa-solid fa-check"></i>
+                                        @else
+                                        <i class="fa-solid fa-times"></i>
+                                        @endif
                                     </span>
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

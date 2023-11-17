@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('added_by')->nullable(false);
             $table->boolean('is_ssd')->nullable(false);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_imported')->default(false);
             $table->timestamps();
         });
     }

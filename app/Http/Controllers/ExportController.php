@@ -23,9 +23,10 @@ class ExportController extends Controller
         'Added By',
         'SSD?',
         'Active?',
+        'Imported?',
         'Created At',
         'Updated At',
-        'Notes'
+        'Note (Last Updated)'
     ];
 
     public function __construct()
@@ -46,9 +47,6 @@ class ExportController extends Controller
             fputcsv($file, self::DATA_HEADERS);
 
             foreach($this->dhcpData as $dhcpEntry) {
-
-                $notes = $dhcpEntry->notes ? json_encode($dhcpEntry->notes->pluck('note', 'updated_at'), JSON_PRETTY_PRINT) : '';
-
                 fputcsv($file, [
                         $dhcpEntry->id,
                         $dhcpEntry->mac_address,
@@ -58,9 +56,10 @@ class ExportController extends Controller
                         $dhcpEntry->added_by,
                         $dhcpEntry->is_ssd ? 'True' : 'False',
                         $dhcpEntry->is_active ? 'True' : 'False',
+                        $dhcpEntry->is_imported ? 'True' : 'False',
                         $dhcpEntry->created_at,
                         $dhcpEntry->updated_at,
-                        $dhcpEntry->notes->all() ? json_encode($dhcpEntry->notes->pluck('note', 'updated_at'), JSON_PRETTY_PRINT) : ''
+                        $dhcpEntry->notes->all() ? json_encode($dhcpEntry->notes->sortByDesc('updated_at')->first(), JSON_PRETTY_PRINT) : ''
                     ]);
             }
 

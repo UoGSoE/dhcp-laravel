@@ -19,7 +19,8 @@ class DhcpEntry extends Model
         'owner',
         'added_by', // 'addedBy' in Livewire
         'is_ssd', // 'isSsd' in Livewire
-        'is_active' // 'isActive' in Livewire
+        'is_active', // 'isActive' in Livewire
+        'is_imported' // 'isImported' in Livewire
     ];
 
     public function notes()
