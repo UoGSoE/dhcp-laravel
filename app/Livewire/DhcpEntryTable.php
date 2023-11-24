@@ -84,7 +84,7 @@ class DhcpEntryTable extends Component
 
     }
 
-    public function updatedselectPage(bool $value)
+    public function updatedSelectPage(bool $value)
     {
         $this->selected = $value
             ? $this->results->paginate($this->perPage)->pluck('id')->map(fn ($id) => (string) $id)->toArray()

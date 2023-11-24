@@ -58,7 +58,7 @@
                 </a>
             </div>
 
-            @if (count($this->selected) > 1)
+            @if (count($this->selected) > 0)
 
                 {{-- <div class="">
                     <button

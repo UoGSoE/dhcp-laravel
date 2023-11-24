@@ -3,14 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\DhcpEntry;
-use App\Models\Note;
-use Livewire\Attributes\Rule;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Ramsey\Uuid\Uuid;
 
 class DhcpEntryCreate extends Component
 {
-    #[Rule([
+    #[Validate([
         'macAddress' => 'required|unique:dhcp_entries,mac_address|mac_address',
         'hostname' => 'required_unless:ipAddress,null|unique:dhcp_entries,hostname',
         'ipAddress' => 'nullable|ip|unique:dhcp_entries,ip_address',
