@@ -10,9 +10,9 @@ class DhcpEntryFactory extends Factory
     {
         return [
             'id' => $this->faker->uuid,
-            'hostname' => $this->faker->word(),
-            'mac_address' => $this->faker->macAddress(),
-            'ip_address' => $this->faker->ipv4(),
+            'hostname' => $this->faker->unique()->word(),
+            'mac_address' => $this->faker->unique()->macAddress(),
+            'ip_address' => $this->faker->unique()->ipv4(),
             'owner' => $this->faker->email(),
             'added_by' => $this->faker->name(),
             'is_ssd' => $this->faker->boolean(),

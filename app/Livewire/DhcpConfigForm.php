@@ -14,7 +14,7 @@ class DhcpConfigForm extends Component
     public ?string $groups = null;
     public ?string $footer = null;
 
-    public bool $showSuccessMessage = false;
+    public bool $showAlertMessage = false;
 
     public function mount()
     {
@@ -61,7 +61,7 @@ class DhcpConfigForm extends Component
 
         $this->dhcpConfig->update($dhcpConfigData);
 
-        $this->showSuccessMessage = true;
+        $this->showAlertMessage = true;
         session()->flash('success', 'DHCP config saved successfully.');
         $this->js("window.scrollTo(0,0)");
     }

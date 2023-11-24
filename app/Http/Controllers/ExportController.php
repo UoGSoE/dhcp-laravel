@@ -3,31 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\DhcpEntry;
+use App\Services\ExportCsvService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportController extends Controller
 {
+    public Collection $dhcpData;
     public ?string $filename;
-    public $dhcpData;
-    public const DATA_HEADERS = [
-        'ID',
-        'Mac Address',
-        'Hostname',
-        'IP Address',
-        'Owner',
-        'Added By',
-        'SSD?',
-        'Active?',
-        'Imported?',
-        'Created At',
-        'Updated At',
-        'Note (Last Updated)'
-    ];
 
     public function __construct()
     {
@@ -37,36 +22,31 @@ class ExportController extends Controller
 
     public function exportCsv(): StreamedResponse
     {
-        $csvHeaders = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $this->filename . '.csv"',
+
+        if ($this->dhcpData->isEmpty()) {
+            throw new \Exception('No data to export');
+            //todo
+        }
+
+        $dataHeaders = [
+            'ID',
+            'Hostname',
+            'Mac Address',
+            'IP Address',
+            'Owner',
+            'Added By',
+            'SSD?',
+            'Active?',
+            'Imported?',
+            'Created At',
+            'Updated At',
+            'Note (Last Updated)'
         ];
 
-        $callback = function () {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, self::DATA_HEADERS);
+        $dataProperties = array_keys($this->dhcpData->first()->getAttributes());
+        $dataProperties[] = 'notes';
 
-            foreach($this->dhcpData as $dhcpEntry) {
-                fputcsv($file, [
-                        $dhcpEntry->id,
-                        $dhcpEntry->mac_address,
-                        $dhcpEntry->hostname,
-                        $dhcpEntry->ip_address,
-                        $dhcpEntry->owner,
-                        $dhcpEntry->added_by,
-                        $dhcpEntry->is_ssd ? 'True' : 'False',
-                        $dhcpEntry->is_active ? 'True' : 'False',
-                        $dhcpEntry->is_imported ? 'True' : 'False',
-                        $dhcpEntry->created_at,
-                        $dhcpEntry->updated_at,
-                        $dhcpEntry->notes->all() ? json_encode($dhcpEntry->notes->sortByDesc('updated_at')->first(), JSON_PRETTY_PRINT) : ''
-                    ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $csvHeaders);
+        return (new ExportCsvService($this->dhcpData, $this->filename, $dataHeaders, $dataProperties))->exportCsvAsStream();
     }
 
     public function exportJson(): JsonResponse

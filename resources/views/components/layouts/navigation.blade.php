@@ -4,25 +4,21 @@
             'icon' => 'fa-house',
             'route' => 'dhcp-entries',
         ],
+        'Edit DHCP config' => [
+            'icon' => '',
+            'route' => 'dhcp-config',
+        ],
         'Import CSV' => [
             'icon' => '',
             'route' => 'import-csv.index',
         ],
-        'Export CSV' => [
+        'Export' => [
             'icon' => '',
-            'route' => 'export-csv',
-        ],
-        'Export JSON' => [
-            'icon' => '',
-            'route' => 'export-json',
+            'route' => 'export.index'
         ],
         'Subnet usage' => [
             'icon' => '',
             'route' => 'dhcp-entry.create',
-        ],
-        'Edit DHCP config' => [
-            'icon' => '',
-            'route' => 'dhcp-config',
         ],
         'Logout' => [
             'icon' => 'fa-right-from-bracket',

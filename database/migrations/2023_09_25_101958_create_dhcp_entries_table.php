@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('dhcp_entries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->macAddress('mac_address')->unique()->nullable(false);
             $table->string('hostname')->unique()->nullable(false);
+            $table->macAddress('mac_address')->unique()->nullable(false);
             $table->ipAddress('ip_address')->nullable();
             $table->string('owner')->nullable(false);
             $table->string('added_by')->nullable(false);

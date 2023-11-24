@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\ExportComponent;
 use App\Models\DhcpEntry;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Livewire\Livewire;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Tests\TestCase;
 
-class DhcpEntryExportTest extends TestCase
+class ExportComponentTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -22,6 +25,7 @@ class DhcpEntryExportTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
+        $this->actingAs($this->user);
 
         $this->dhcpEntry1 = DhcpEntry::factory()->create([
             'hostname' => 'test-hostname',
@@ -53,19 +57,31 @@ class DhcpEntryExportTest extends TestCase
         ]);
     }
 
-    public function test_export_to_csv(): void
+    public function test_component_renders(): void
     {
-        $this->actingAs($this->user);
-        $response = $this->get(route('export-csv'));
-
+        $response = $this->get(route('export.index'));
         $response->assertStatus(200);
     }
 
-    public function test_export_to_json(): void
+    public function test_export_to_csv_successful(): void
     {
-        $this->actingAs($this->user);
-        $response = $this->get(route('export-json'));
+        $response = Livewire::test(ExportComponent::class)
+            ->call('exportCsv');
 
-        $response->assertStatus(200);
+        $this->assertArrayHasKey('download', $response->effects);
+        $this->assertSame('text/csv', $response->effects['download']['contentType']);
+
+        $response->assertFileDownloaded();
+    }
+
+    public function test_export_to_json_successful(): void
+    {
+        $response = Livewire::test(ExportComponent::class)
+            ->call('exportJson');
+
+        $this->assertArrayHasKey('download', $response->effects);
+        $this->assertSame('application/json', $response->effects['download']['contentType']);
+
+        $response->assertFileDownloaded();
     }
 }

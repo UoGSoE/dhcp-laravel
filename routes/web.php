@@ -27,8 +27,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dhcp-entry/{dhcpEntry}/edit', \App\Livewire\DhcpEntryEdit::class)->name('dhcp-entry.edit');
     Route::get('/dhcp-entry/config', \App\Livewire\DhcpConfigForm::class)->name('dhcp-config');
     Route::get('/logout', [\App\Http\Controllers\LogoutController::class, 'logout'])->name('logout');
-    Route::get('/export-csv', [\App\Http\Controllers\ExportController::class, 'exportCsv'])->name('export-csv');
-    Route::get('/export-json', [\App\Http\Controllers\ExportController::class, 'exportJson'])->name('export-json');
+    Route::get('/export', \App\Livewire\ExportComponent::class)->name('export.index');
     Route::get('/import-csv', \App\Livewire\ImportComponent::class)->name('import-csv.index');
-    Route::post('/import-csv/upload', [\App\Livewire\ImportComponent::class, 'import'])->name('import-csv.upload');
 });

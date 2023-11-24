@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Livewire\Attributes\Validate;
 use App\Models\DhcpEntry;
 use App\Models\Note;
 use Carbon\Carbon;
@@ -9,9 +10,18 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Livewire\Component;
 use DateTime;
+use Livewire\WithFileUploads;
 
 class ImportComponent extends Component
 {
+    use WithFileUploads;
+
+    public bool $showAlertMessage = false;
+    public ?bool $importSuccess = null;
+
+    #[Validate('required|mimes:csv,xls,xls')]
+    public $uploadedCsv;
+
     public function render()
     {
         return view('livewire.import-component');
@@ -19,22 +29,9 @@ class ImportComponent extends Component
 
     public function import(Request $request)
     {
-        if (!$request->hasFile('upload')) {
-            //todo
-            return redirect()->back()->with('error', 'No file selected');
-        }
+        $this->validate();
 
-        if (!$request->file('upload')->isValid()) {
-            //todo
-            return redirect()->back()->with('error', 'File is not valid');
-        }
-
-        $file = $request->file('upload');
-        if (!$file instanceof UploadedFile || $file->getMimeType() !== 'text/csv') {
-            return;
-        }
-
-        $stream = fopen($file->getRealPath(), 'r');
+        $stream = fopen($this->uploadedCsv->getRealPath(), 'r');
 
         $data = [];
         while(($row = fgetcsv($stream)) !== false) {
@@ -56,11 +53,11 @@ class ImportComponent extends Component
                 'ip_address' => $entry[3] ? $entry[3] : null,
                 'owner' => $entry[4],
                 'added_by' => $entry[5],
-                'is_ssd' => $entry[6] === "TRUE",
-                'is_active' => $entry[7] === "TRUE",
+                'is_ssd' => strtolower($entry[6]) === "true",
+                'is_active' => strtolower($entry[7]) === "true",
                 'is_imported' => true,
-                'created_at' => (new DateTime)->createFromFormat('d/m/Y H:i', $entry[9]),
-                'updated_at' => (new DateTime)->createFromFormat('d/m/Y H:i', $entry[10]),
+                'created_at' => (new DateTime)->setTimestamp(strtotime($entry[9])),
+                'updated_at' => (new DateTime)->setTimestamp(strtotime($entry[10])),
             ];
 
             if ($entry[11] !== "") {
@@ -75,9 +72,14 @@ class ImportComponent extends Component
             DhcpEntry::insert($dhcpEntries);
             Note::insert($notes);
         } catch (\Exception $e) {
-            redirect()->back()->with('error', 'Error importing data');
+            $this->importSuccess = false;
+            session()->flash('error', "Error importing data: {$e->getMessage()}");
+            $this->showAlertMessage = true;
+            return;
         }
 
-        return redirect()->back()->with('success', 'Data imported successfully');
+        $this->importSuccess = true;
+        session()->flash('success', 'Data imported successfully');
+        $this->showAlertMessage = true;
     }
 }

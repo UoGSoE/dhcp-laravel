@@ -1,7 +1,7 @@
 <div>
 
     @if (session()->has('success'))
-        @include('components.alerts.success', ['message' => session('success')])
+        @include('components.alerts.alert', ['message' => session('success')])
     @endif
 
     <form>

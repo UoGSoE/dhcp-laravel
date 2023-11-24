@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
+const colors = require('tailwindcss/colors');
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -19,6 +20,18 @@ export default {
             },
             maxWidth: {
                 '1/2': '50%',
+            },
+            colors: {
+                transparent: 'transparent',
+                current: 'currentColor',
+                black: colors.black,
+                blue: colors.blue,
+                white: colors.white,
+                gray: colors.slate,
+                green: colors.emerald,
+                purple: colors.violet,
+                yellow: colors.amber,
+                pink: colors.fuchsia,
             },
         },
     },

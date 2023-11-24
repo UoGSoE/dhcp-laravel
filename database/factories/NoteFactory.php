@@ -12,6 +12,8 @@ class NoteFactory extends Factory
         return [
             'note' => $this->faker->sentence(),
             'created_by' => $this->faker->name(),
+            'created_at' => $this->faker->dateTimeBetween('-1 year', '-6 months'),
+            'updated_at' => $this->faker->dateTimeBetween('-5 months', 'now'),
         ];
     }
 }
