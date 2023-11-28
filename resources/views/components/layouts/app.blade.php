@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-    class="h-full"
+    class="h-full overflow-x-hidden"
 >
 
     <head>
@@ -22,15 +22,20 @@
 
     </head>
 
-    <body class="w-full h-full max-w-full max-h-full">
-        <div id="app" class="{{ auth()->guest() ? '' : 'flex flex-row w-full h-full' }}">
+    <body class="sm:w-full sm:h-full sm:max-w-full sm:max-h-full flex flex-col">
+        <div id="app"
+            class="{{ auth()->guest() ? '' : 'flex sm:flex-row sm:h-full' }}
+            flex-col h-max">
+
+            {{-- Navigation --}}
             @auth
-                <div class="h-full">
+                <div class="sm:flex sm:h-full sm:w-2/12">
                     @include('components.layouts.navigation')
                 </div>
             @endauth
 
-            <div class="w-full mt-12 px-4 sm:px-6 lg:px-8">
+            {{-- Main content --}}
+            <div class="sm:w-10/12 mt-12 px-4 sm:px-6 lg:px-8 w-full">
                 @isset ($slot)
                     {{ $slot }}
                 @endisset

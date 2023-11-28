@@ -48,8 +48,8 @@ class ImportComponent extends Component
         foreach ($data as $entry) {
             $dhcpEntries[] = [
                 'id' => $entry[0],
-                'mac_address' => $entry[1],
-                'hostname' => $entry[2],
+                'hostname' => $entry[1],
+                'mac_address' => $entry[2],
                 'ip_address' => $entry[3] ? $entry[3] : null,
                 'owner' => $entry[4],
                 'added_by' => $entry[5],

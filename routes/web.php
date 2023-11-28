@@ -29,4 +29,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/logout', [\App\Http\Controllers\LogoutController::class, 'logout'])->name('logout');
     Route::get('/export', \App\Livewire\ExportComponent::class)->name('export.index');
     Route::get('/import-csv', \App\Livewire\ImportComponent::class)->name('import-csv.index');
+    Route::get('/documentation', \App\Livewire\DocumentationComponent::class)->name('documentation');
 });

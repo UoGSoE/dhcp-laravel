@@ -10,8 +10,8 @@ use Ramsey\Uuid\Uuid;
 class DhcpEntryCreate extends Component
 {
     #[Validate([
-        'macAddress' => 'required|unique:dhcp_entries,mac_address|mac_address',
         'hostname' => 'required_unless:ipAddress,null|unique:dhcp_entries,hostname',
+        'macAddress' => 'required|unique:dhcp_entries,mac_address|mac_address',
         'ipAddress' => 'nullable|ip|unique:dhcp_entries,ip_address',
         'owner' => 'required',
         'addedBy' => 'required',
@@ -22,8 +22,8 @@ class DhcpEntryCreate extends Component
     ])]
 
     public string $id;
-    public string $macAddress = '';
     public string $hostname = '';
+    public string $macAddress = '';
     public ?string $ipAddress = null;
     public string $owner = '';
     public string $addedBy = '';
