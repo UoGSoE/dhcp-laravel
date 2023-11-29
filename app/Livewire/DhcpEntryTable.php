@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\DhcpEntry;
+use App\Services\InputValidationService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -24,61 +25,59 @@ class DhcpEntryTable extends Component
     public bool $selectAll = false;
 
     public array $editedEntries = [];
-    public array $currentEditedEntry = [
-        'id' => '',
-        'field' => '',
-        'originalValue' => '',
-    ];
+    public array $editRowActive = [];
+    public array $validationErrors = [];
 
-    public function rules(string $field = ''): array
+    public bool $showAlertMessage = false;
+
+    public function rules(): array
     {
-        if ($field == 'hostname') {
-            return [
-                'editedEntries.*.hostname' => 'required|unique:dhcp_entries,hostname',
-            ];
-        } elseif ($field == 'mac_address') {
-            return [
-                'editedEntries.*.mac_address' => 'required|unique:dhcp_entries,mac_address|mac_address',
-            ];
-        } elseif ($field == 'ip_address') {
-            return [
-                'editedEntries.*.ip_address' => 'nullable|ip|unique:dhcp_entries,ip_address',
-            ];
-        } elseif ($field == 'owner') {
-            return [
-                'editedEntries.*.owner' => 'required',
-            ];
-        } elseif ($field == 'is_ssd') {
-            return [
-                'editedEntries.*.is_ssd' => 'required',
-            ];
-        } elseif ($field == 'is_active') {
-            return [
-                'editedEntries.*.is_active' => 'required',
-            ];
-        } else {
-            return [
-                'editedEntries.*.hostname' => 'required_unless:editedEntries.*.ip_address,null|unique:dhcp_entries,hostname',
-                'editedEntries.*.mac_address' => 'required|unique:dhcp_entries,mac_address|mac_address',
-                'editedEntries.*.ip_address' => 'nullable|ip|unique:dhcp_entries,ip_address',
-                'editedEntries.*.owner' => 'required',
-            ];
-        }
+        return [
+            // 'editedEntries.*.hostname' => 'required|unique:dhcp_entries,hostname',
+            // 'editedEntries.*.mac_address' => 'required|unique:dhcp_entries,mac_address|mac_address',
+            // 'editedEntries.*.ip_address' => 'nullable|ip|unique:dhcp_entries,ip_address',
+            // 'editedEntries.*.owner' => 'required',
+            // 'editedEntries.*.is_ssd' => 'required|boolean',
+            // 'editedEntries.*.is_active' => 'required|boolean',
+
+
+            'hostname' => 'required|unique:dhcp_entries,hostname',
+            'mac_address' => 'required|unique:dhcp_entries,mac_address|mac_address',
+            'ip_address' => 'nullable|ip|unique:dhcp_entries,ip_address',
+            'owner' => 'required',
+            'is_ssd' => 'required|boolean',
+            'is_active' => 'required|boolean',
+        ];
     }
 
     public function messages(): array
     {
         return [
-            'editedEntries.*.hostname.required' => 'Hostname is required',
-            'editedEntries.*.hostname.unique' => 'Hostname is already in use',
-            'editedEntries.*.mac_address.required' => 'MAC address is required',
-            'editedEntries.*.mac_address.unique' => 'MAC address is already in use',
-            'editedEntries.*.mac_address.mac_address' => 'MAC address is not valid',
-            'editedEntries.*.ip_address.ip' => 'IP address is not valid',
-            'editedEntries.*.ip_address.unique' => 'IP address is already in use',
-            'editedEntries.*.owner.required' => 'Owner is required',
-            'editedEntries.*.is_ssd.required' => 'Input is required',
-            'editedEntries.*.is_active.required' => 'Input is required',
+            // 'editedEntries.*.hostname.required' => 'Hostname is required',
+            // 'editedEntries.*.hostname.unique' => 'Hostname is already in use',
+            // 'editedEntries.*.mac_address.required' => 'MAC address is required',
+            // 'editedEntries.*.mac_address.unique' => 'MAC address is already in use',
+            // 'editedEntries.*.mac_address.mac_address' => 'MAC address is not valid',
+            // 'editedEntries.*.ip_address.ip' => 'IP address is not valid',
+            // 'editedEntries.*.ip_address.unique' => 'IP address is already in use',
+            // 'editedEntries.*.owner.required' => 'Owner is required',
+            // 'editedEntries.*.is_ssd.required' => 'Input is required',
+            // 'editedEntries.*.is_ssd.boolean' => 'Input must be a boolean',
+            // 'editedEntries.*.is_active.required' => 'Input is required',
+            // 'editedEntries.*.is_active.boolean' => 'Input must be a boolean',
+
+            'hostname.required' => 'Hostname is required',
+            'hostname.unique' => 'Hostname is already in use',
+            'mac_address.required' => 'MAC address is required',
+            'mac_address.unique' => 'MAC address is already in use',
+            'mac_address.mac_address' => 'MAC address is not valid',
+            'ip_address.ip' => 'IP address is not valid',
+            'ip_address.unique' => 'IP address is already in use',
+            'owner.required' => 'Owner is required',
+            'is_ssd.required' => 'Input is required',
+            'is_ssd.boolean' => 'Input must be a boolean',
+            'is_active.required' => 'Input is required',
+            'is_active.boolean' => 'Input must be a boolean',
         ];
     }
 
@@ -177,72 +176,65 @@ class DhcpEntryTable extends Component
         DhcpEntry::destroy($selected);
     }
 
-    // public function editDhcpEntry(array $dhcpEntry)
-    // {
-    //     $this->currentEditedEntry = [
-    //         'id' => $dhcpEntry['id'],
-    //         'hostname'  => $dhcpEntry['hostname'],
-    //         'mac_address' => $dhcpEntry['mac_address'],
-    //         'ip_address' => $dhcpEntry['ip_address'],
-    //         'owner' => $dhcpEntry['owner'],
-    //         'is_ssd' => $dhcpEntry['is_ssd'],
-    //         'is_active' => $dhcpEntry['is_active'],
-    //     ];
 
-    //     $this->editedEntries[] = $dhcpEntry['id'];
-    // }
-
-    // Prepare to edit field
-    public function editField(array $dhcpEntry, string $field): void
+    public function prepareEditDhcpRow(array $dhcpEntry)
     {
-        $this->currentEditedEntry = [
+        $this->editedEntries[$dhcpEntry['id']] = [
             'id' => $dhcpEntry['id'],
-            'field' => $field,
-            'originalValue' => $dhcpEntry[$field],
+            'hostname'  => $dhcpEntry['hostname'],
+            'mac_address' => $dhcpEntry['mac_address'],
+            'ip_address' => $dhcpEntry['ip_address'],
+            'owner' => $dhcpEntry['owner'],
+            'is_ssd' => $dhcpEntry['is_ssd'],
+            'is_active' => $dhcpEntry['is_active'],
         ];
 
-        $this->editedEntries[$dhcpEntry['id']][$field] = $dhcpEntry[$field];
-
-        // If the field being edited is hostname, add ip address value for validation
-        if ($field == 'hostname') {
-            $this->editedEntries[$dhcpEntry['id']]['ip_address'] = $dhcpEntry['ip_address'];
-        }
+        $this->editRowActive[$dhcpEntry['id']] = true;
     }
 
-    // Save new value for field
-    public function updateField(array $dhcpEntry, string $field)
+    public function saveUpdatedRow(array $dhcpEntry)
     {
-        // Value is unchanged, cancel edit
-        if ($this->editedEntries[$dhcpEntry['id']][$field] == $this->currentEditedEntry['originalValue']) {
+        $this->validationErrors = [];
+        $this->showAlertMessage = false;
+
+        $changedValues = array_diff_assoc($this->editedEntries[$dhcpEntry['id']], $dhcpEntry);
+
+        // Row is unchanged, cancel edit
+        if (empty($changedValues)) {
             $this->cancelEditField($dhcpEntry['id']);
             return;
         }
 
-        $this->validate($this->rules($field), $this->messages());
-        if ($this->getErrorBag()->has($field)) {
-            session()->flash('error', 'DHCP entry update  unsuccessful.');
+        $this->validationErrors = InputValidationService::validateInput(
+            $changedValues,
+            $this->rules(),
+            $this->messages(),
+            $this->validationErrors
+        );
+
+        if (!empty($this->validationErrors)) {
+            session()->flash('error', 'DHCP entry update unsuccessful.');
+            $this->showAlertMessage = true;
             return;
         }
 
         $dhcpEntryModel = DhcpEntry::find($dhcpEntry['id']);
-        $dhcpEntryModel->$field = $this->editedEntries[$dhcpEntry['id']][$field];
-        $dhcpEntryModel->save();
+        foreach($changedValues as $key => $value) {
+            $dhcpEntryModel->$key = $value;
+        }
 
+        $dhcpEntryModel->save();
         session()->flash('success', 'DHCP entry updated successfully.');
+        $this->showAlertMessage = true;
 
         $this->cancelEditField($dhcpEntry['id']);
     }
 
     public function cancelEditField(string $id): void
     {
-        $this->currentEditedEntry = [
-            'id' => '',
-            'field' => '',
-            'originalValue' => '',
-        ];
-
         unset($this->editedEntries[$id]);
+        unset($this->editRowActive[$id]);
 
-        $this->resetValidation();
+        $this->validationErrors = [];
     }
 }

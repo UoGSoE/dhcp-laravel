@@ -42,7 +42,7 @@
                         @if ($key == 'Documentation')
                             <li class="flex justify-self-end">
                                 <a href="{{ route($item['route']) }}" class="{{ (request()->routeIs($item['route'])) ? 'bg-gray-50 text-indigo-600' : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50' }}
-                                    group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold w-full pr-3">
+                                    group flex gap-x-3 rounded-md p-2 text-base leading-6 font-semibold w-full pr-3">
                                     <div class="grid" style="grid-template-columns: 2rem 100%">
                                         <span>
                                             @if ($item['icon'])
@@ -56,16 +56,16 @@
                                 </a>
                             </li>
                         @else
-                            <li class="w-full pr-3">
+                            <li class="w-full px-3">
                                 <a href="{{ route($item['route']) }}" class="{{ (request()->routeIs($item['route'])) ? 'bg-gray-50 text-indigo-600' : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50' }}
-                                    group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold w-full pr-3">
+                                    group flex gap-x-3 rounded-md p-2 text-base leading-6 font-semibold w-full pr-3">
                                     <div class="grid" style="grid-template-columns: 2rem 100%">
-                                        <span>
+                                        <span class="pl-2">
                                             @if ($item['icon'])
                                             <i class="fa-solid {{ $item['icon'] }}"></i>
                                             @endif
                                         </span>
-                                        <span>
+                                        <span class="pr-2">
                                             {{ $key }}
                                         </span>
                                     </div>

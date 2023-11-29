@@ -20,7 +20,7 @@
             </svg>
         </div>
         <div class="ml-3">
-            <p class="text-sm
+            <p class="text-base
             @if ($key == 'success') font-medium text-green-800 @elseif ($key == 'info') font-medium text-blue-800 @elseif ($key == 'error') font-medium text-red-800  @endif
             ">
                 {{ session($key) }}

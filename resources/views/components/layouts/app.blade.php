@@ -29,13 +29,13 @@
 
             {{-- Navigation --}}
             @auth
-                <div class="sm:flex sm:h-full sm:w-2/12">
+                <div class="sm:flex sm:h-full sm:w-max">
                     @include('components.layouts.navigation')
                 </div>
             @endauth
 
             {{-- Main content --}}
-            <div class="sm:w-10/12 mt-12 px-4 sm:px-6 lg:px-8 w-full">
+            <div class="sm:w-full sm:overflow-x-scroll mt-12 px-4 sm:px-6 lg:px-8 w-full">
                 @isset ($slot)
                     {{ $slot }}
                 @endisset

@@ -15,7 +15,7 @@
         name="macAddress"
         id="macAddress"
         autocomplete=""
-        class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+        class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
         placeholder="MAC address" />
 @endsection
 
@@ -26,7 +26,7 @@
         name="owner"
         id="owner"
         autocomplete=""
-        class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+        class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
         placeholder="Owner (email address)" />
 @endsection
 
@@ -37,7 +37,7 @@
         name="ipAddress"
         id="ipAddress"
         autocomplete=""
-        class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+        class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
         placeholder="IP address (leave blank for pool)" />
 @endsection
 
@@ -51,7 +51,7 @@
         name="hostName"
         id="hostName"
         autocomplete=""
-        class="{{ (!$ipAddress or $ipAddress == '') ? 'disabled:bg-gray-100 disabled:text-slate-500 ' : '' }} block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+        class="{{ (!$ipAddress or $ipAddress == '') ? 'disabled:bg-gray-100 disabled:text-slate-500 ' : '' }} block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-base sm:leading-6"
         placeholder="Hostname (only for fixed IP machines)" />
 @endsection
 
@@ -79,7 +79,7 @@
 @endsection
 
 @section('note-section')
-    <label for="note" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">Notes</label>
+    <label for="note" class="block text-base font-medium leading-6 text-gray-900 sm:pt-1.5">Notes</label>
 
     <ul class="flex flex-col gap-y-4 mt-2 sm:col-span-2 sm:mt-0">
         @if ($notes)
@@ -91,7 +91,7 @@
                     <div class="flex flex-col gap-y-1">
                         {{-- Note user, edit/delete --}}
                         <div class="flex items-center gap-1 gap-x-3 justify-between">
-                            <p class="text-sm font-semibold leading-6 text-gray-900">
+                            <p class="text-base font-semibold leading-6 text-gray-900">
                                 {{ $note->created_by }}
                             </p>
 
@@ -107,7 +107,7 @@
                         </div>
 
                         {{-- Note created + edit dates --}}
-                        <div class="flex gap-x-4 flex-row line-clamp-1 text-sm text-gray-600">
+                        <div class="flex gap-x-4 flex-row line-clamp-1 text-base text-gray-600">
                             <p class="flex-none">
                                 {{ $note->created_at->format('d-m-Y H:i') }}
                             </p>
@@ -132,14 +132,14 @@
                 id="note"
                 name="note"
                 rows="3"
-                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6">
             </textarea>
         </li>
     </ul>
 @endsection
 
 @section('save-cancel-buttons')
-    <button type="button" class="text-sm font-semibold leading-6 text-gray-900">
+    <button type="button" class="text-base font-semibold leading-6 text-gray-900">
         <a href="{{ route('dhcp-entries')}}">
             Cancel
         </a>
@@ -152,7 +152,7 @@
             disabled
         @endif
         class="{{ (count($errors) > 0) ? 'disabled:opacity-75 disabled
-        aria-disabled ' : '' }} inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm
+        aria-disabled ' : '' }} inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-base
         font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
         focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
         Save

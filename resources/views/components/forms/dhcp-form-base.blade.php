@@ -7,7 +7,7 @@
     <form>
         <div class="space-y-12 sm:space-y-16">
             <div>
-                <h1 class="text-base font-semibold leading-7 text-gray-900">
+                <h1 class="text-lg font-semibold leading-7 text-gray-900">
                     @yield('form-title')
                 </h1>
 
@@ -16,7 +16,7 @@
 
                     {{-- MAC addresses --}}
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-                        <label for="macAddress" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
+                        <label for="macAddress" class="block text-base font-medium leading-6 text-gray-900 sm:pt-1.5">
                             MAC Address
                         </label>
                         <div class="mt-2 sm:col-span-2 sm:mt-0">
@@ -29,7 +29,7 @@
                             @error('macAddress')
                             <div class='error-message text-red-700 mt-3 flex items-center'>
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span class='px-2 text-sm'>
+                                <span class='px-2 text-base'>
                                     {{ $message}}
                                 </span>
                             </div>
@@ -39,7 +39,7 @@
 
                     {{-- Owner (email address) --}}
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-                        <label for="owner" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
+                        <label for="owner" class="block text-base font-medium leading-6 text-gray-900 sm:pt-1.5">
                             Owner (email address)
                         </label>
                         <div class="mt-2 sm:col-span-2 sm:mt-0">
@@ -52,7 +52,7 @@
                             @error('owner')
                             <div class='error-message text-red-700 mt-3 flex items-center'>
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span class='px-2 text-sm'>
+                                <span class='px-2 text-base'>
                                     {{ $message}}
                                 </span>
                             </div>
@@ -62,7 +62,7 @@
 
                     {{-- IP address --}}
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-                        <label for="ipAddress" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
+                        <label for="ipAddress" class="block text-base font-medium leading-6 text-gray-900 sm:pt-1.5">
                             Fixed IP Address
                         </label>
                         <div class="mt-2 sm:col-span-2 sm:mt-0">
@@ -75,7 +75,7 @@
                             @error('ipAddress')
                             <div class='error-message text-red-700 mt-3 flex items-center'>
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span class='px-2 text-sm'>
+                                <span class='px-2 text-base'>
                                     {{ $message}}
                                 </span>
                             </div>
@@ -85,7 +85,7 @@
 
                     {{-- Hostname --}}
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-                        <label for="hostName" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
+                        <label for="hostName" class="block text-base font-medium leading-6 text-gray-900 sm:pt-1.5">
                             Hostname
                         </label>
 
@@ -98,14 +98,14 @@
 
                             <div class='mt-3 flex items-center'>
                                 <i class="fa-solid fa-circle-info h-4"></i>
-                                <span class='px-2 text-sm'>Hostname must only contain letters,
+                                <span class='px-2 text-base'>Hostname must only contain letters,
                                     numbers, hyphens or full-stops.</span>
                             </div>
 
                             @error('hostname')
                             <div class='error-message text-red-700 mt-3 flex items-center'>
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span class='px-2 text-sm'>
+                                <span class='px-2 text-base'>
                                     {{ $message }}
                                 </span>
                             </div>

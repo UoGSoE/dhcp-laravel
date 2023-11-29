@@ -10,7 +10,6 @@ class InputValidationService
         array $data,
         array $rules,
         array $messages = [],
-        string $inputField,
         array $validationErrors,
     ): array {
         $validation = Validator::make(
@@ -19,15 +18,26 @@ class InputValidationService
             $messages
         );
 
-        // Validation error for this field
-        $error = $validation->errors()->get($inputField);
 
-        // Save validation errors for this field
-        if ($error) {
-            $validationErrors[$inputField] = $error;
-        } else {
-            unset($validationErrors[$inputField]);
+        foreach ($data as $key => $value) {
+            $error = $validation->errors()->get($key);
+
+            if ($error) {
+                $validationErrors[$key] = $error;
+            } else {
+                unset($validationErrors[$key]);
+            }
         }
+
+        // Validation error for this field
+        // $error = $validation->errors()->get($inputField);
+
+        // // Save validation errors for this field
+        // if ($error) {
+        //     $validationErrors[$inputField] = $error;
+        // } else {
+        //     unset($validationErrors[$inputField]);
+        // }
 
         return $validationErrors;
     }

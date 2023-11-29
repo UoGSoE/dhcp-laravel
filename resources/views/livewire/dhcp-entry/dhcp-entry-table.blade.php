@@ -43,307 +43,308 @@
 ])
 
 <div class="w-full">
+    {{-- Alert messages --}}
+    @if ((session('info') || session('success') || session('error')) && $showAlertMessage)
+        @include('components.alerts.alert')
+    @endif
+
     <div class="justify-around sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <h1 class="text-base font-semibold leading-6 text-gray-900">DHCP Entries</h1>
-            <p class="mt-2 text-sm text-gray-700">DHCP entry list</p>
+            <h1 class="text-lg font-semibold leading-6 text-gray-900">DHCP Entries</h1>
         </div>
-        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-row gap-4">
-            <div class="">
-                <a href="{{ route('dhcp-entry.create') }}">
-                    <button type="button"
-                        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                        Add DHCP entry
-                    </button>
-                </a>
-            </div>
+    </div>
+
+
+    <div class="flex flex-row w-full align-middle mt-10 justify-between">
+        {{-- Add DHCP entry button --}}
+        <div class="sm:mt-0 sm:flex sm:flex-row sm:gap-4">
+            <a href="{{ route('dhcp-entry.create') }}">
+                <button type="button"
+                    class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Add DHCP entry
+                </button>
+            </a>
 
             @if (count($this->selected) > 0)
-
-                {{-- <div class="">
-                    <button
-                        wire:click="$dispatch('openModal', {component: 'dhcp-edit-modal', arguments: {selected: {{ json_encode($this->selected) }} }})"
-                        type="button"
-                        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                        Edit selected
-                    </button>
-                </div> --}}
-
-                <div class="">
-
+                <div>
                     <button
                         wire:click="deleteSelected({{ json_encode($this->selected) }})"
                         wire:confirm="Are you sure you want to delete these entries?"
                         type="button"
-                        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                         Delete selected
                     </button>
-
                 </div>
-
             @endif
-
-
         </div>
 
+        @if (count($dhcpEntries) > 0 || $search !== '' || $activeFilter !== '')
+            {{-- Search and filter --}}
+            <div class="flex justify-between align-middle gap-8">
 
-    </div>
-
-
-    <div class="flex justify-between">
-        {{-- Search --}}
-        <div class="relative mt-2 flex items-center">
-            <input
-                wire:model.live="search" type="text" name="search" id="search"
-                class="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-        </div>
-
-        <div>
-            {{-- Active filter --}}
-            <div>
-                <label for="activeFilter" class="block text-sm font-medium leading-6 text-gray-900">Active</label>
-                <select wire:model.live="activeFilter" id="activeFilter" name="activeFilter"
-                    class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    <option value="reset" selected>All</option>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                </select>
-            </div>
-
-
-        </div>
-    </div>
-    {{-- End search --}}
-
-    <div class="mt-8 flow-root">
-        <div class="my-2 overflow-x-auto">
-            <div class="inline-block min-w-full py-2 align-middle pl-1">
-
-                <div class="mb-4">
-                    @if ($selectPage)
-                        @unless ($selectAll)
-
-                            You selected <strong>{{ count($selected) }}</strong> entries, would you like to select <strong>{{ $dhcpEntries->total() }}</strong> entries?
-                            <button wire:click="selectAllEntries" class="btn text-blue-600">
-                                Select All
-                            </button>
-                        @else
-                            You have selected all <strong>{{ $dhcpEntries->total() }}</strong> entries.
-                        @endunless
-                    @endif
-
+                {{-- Search --}}
+                <div class="">
+                    <div class="relative rounded-md shadow-sm w-96">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                        </div>
+                        <input wire:model.live="search" type="text" name="search" id="search"
+                            placeholder="Search"
+                            class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6" />
+                    </div>
                 </div>
 
+                {{-- Active filter --}}
+                <div class="w-max">
+                    <div class="flex flex-row align-middle gap-3">
+                        <label for="activeFilter" class="text-base font-medium leading-6 text-gray-900 flex self-center w-40">Filter active:</label>
+                        <select wire:model.live="activeFilter" id="activeFilter" name="activeFilter"
+                            class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-base sm:leading-6">
+                            <option value="reset" selected>All</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        @endif
 
-                <table class="min-w-full divide-y divide-gray-300">
-                    <thead>
-                        <tr>
-                            {{-- Edit row --}}
-                            {{-- <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                            </th> --}}
 
-                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                                <input wire:model.live="selectPage" type="checkbox" />
-                            </th>
+    </div>
 
-                            @foreach ($headers as $header)
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                                    <a
-                                        wire:click.prevent="sortBy('{{ $header['property'] }}')"
-                                        role="button"
-                                        href="#"
-                                        class="group inline-flex">
-                                        {{ $header['label'] }}
-                                        <span class="ml-2 flex-none rounded">
-                                            @if ($sortField === $header['property'])
-                                                <span class="text-gray-400">
-                                                    @if ($sortAsc)
-                                                        <i class="fa-solid fa-chevron-up"></i>
+    @if (count($dhcpEntries) > 0 || $search !== '' || $activeFilter !== '')
+        <div>
+            {{-- Table --}}
+            <div class="mt-8 flow-root">
+                <div class="my-2 overflow-x-auto">
+                    <div class="inline-block min-w-full py-2 align-middle pl-1">
+
+                        <div class="mb-4">
+                            @if ($selectPage)
+                                @unless ($selectAll)
+
+                                    You selected <strong>{{ count($selected) }}</strong> entries, would you like to select <strong>{{ $dhcpEntries->total() }}</strong> entries?
+                                    <button wire:click="selectAllEntries" class="btn text-blue-600">
+                                        Select All
+                                    </button>
+                                @else
+                                    You have selected all <strong>{{ $dhcpEntries->total() }}</strong> entries.
+                                @endunless
+                            @endif
+
+                        </div>
+
+
+                        <table class="min-w-full divide-y divide-gray-300">
+                            <thead>
+                                <tr>
+                                    {{-- Edit row --}}
+                                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-base font-semibold text-gray-900 sm:pl-0">
+                                    </th>
+
+                                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-base font-semibold text-gray-900 sm:pl-0">
+                                        <input wire:model.live="selectPage" type="checkbox" />
+                                    </th>
+
+                                    @foreach ($headers as $header)
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-base font-semibold text-gray-900 sm:pl-0">
+                                            <a
+                                                wire:click.prevent="sortBy('{{ $header['property'] }}')"
+                                                role="button"
+                                                href="#"
+                                                class="group inline-flex">
+                                                {{ $header['label'] }}
+                                                <span class="ml-2 flex-none rounded">
+                                                    @if ($sortField === $header['property'])
+                                                        <span class="text-gray-400">
+                                                            @if ($sortAsc)
+                                                                <i class="fa-solid fa-chevron-up"></i>
+                                                            @else
+                                                                <i class="fa-solid fa-chevron-down"></i>
+                                                            @endif
+                                                        </span>
                                                     @else
-                                                        <i class="fa-solid fa-chevron-down"></i>
+                                                        <span class="invisible text-gray-400 group-hover:visible group-focus:visible">
+                                                            <i class="fa-solid fa-sort"></i>
+                                                        </span>
                                                     @endif
                                                 </span>
+                                            </a>
+                                        </th>
+                                    @endforeach
+
+                                    <th scope="col" class="relative py-3.5 pl-3 pr-0">
+                                        <span class="sr-only">Edit/View</span>
+                                    </th>
+
+                                    <th scope="col" class="relative py-3.5 pl-3 pr-0">
+                                        <span class="sr-only">Delete</span>
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                @foreach ($dhcpEntries as $dhcpEntry)
+                                    <tr wire:key="{{ $dhcpEntry->id }}" >
+
+                                        {{-- Edit row --}}
+
+                                        <td class="whitespace-nowrap py-4 pl-4 pr-6 text-base font-medium text-gray-900 sm:pl-0">
+
+                                            @if (array_key_exists($dhcpEntry->id, $editRowActive) && $editRowActive[$dhcpEntry->id] === true)
+                                                <div class="flex flex-row gap-5">
+                                                    <i
+                                                        wire:click.prevent="saveUpdatedRow({{ $dhcpEntry }})"
+                                                        class="fa-solid fa-check fa-lg opacity-50 hover:cursor-pointer hover:opacity-100 text-green-700"></i>
+
+                                                    <i
+                                                        wire:click.prevent="cancelEditField('{{ $dhcpEntry->id }}')"
+                                                        class="fa-solid fa-xmark fa-lg opacity-50 hover:cursor-pointer hover:opacity-100 text-red-700"></i>
+                                                </div>
                                             @else
-                                                <span class="invisible text-gray-400 group-hover:visible group-focus:visible">
-                                                    <i class="fa-solid fa-sort"></i>
+                                                <i wire:click.prevent="prepareEditDhcpRow({{ $dhcpEntry }})" class="fa-solid fa-pencil opacity-30 hover:cursor-pointer hover:opacity-50"></i>
+                                            @endif
+
+                                        </td>
+
+                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-base font-medium text-gray-900 sm:pl-0">
+                                            <input
+                                                wire:model.live="selected"
+                                                type="checkbox"
+                                                value="{{ $dhcpEntry->id }}"
+                                                @checked(in_array($dhcpEntry->id, $selected))
+                                            />
+                                        </td>
+
+                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-base font-medium text-gray-900 sm:pl-0">
+                                            @include('components.layouts.partials.table-inline-input', [
+                                                'fieldName' => 'hostname',
+                                                'dhcpEntry' => $dhcpEntry,
+                                                'errors' => $validationErrors
+                                            ])
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            @include('components.layouts.partials.table-inline-input', [
+                                                'fieldName' => 'mac_address',
+                                                'dhcpEntry' => $dhcpEntry,
+                                                'errors' => $validationErrors
+                                            ])
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            @include('components.layouts.partials.table-inline-input', [
+                                                'fieldName' => 'ip_address',
+                                                'dhcpEntry' => $dhcpEntry,
+                                                'errors' => $validationErrors
+                                            ])
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            @if ($dhcpEntry->created_at)
+                                                {{ $dhcpEntry->created_at->format('d/m/Y H:i') }}
+                                            @endif
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            @if ($dhcpEntry->added_by)
+                                                {{ $dhcpEntry->added_by }}
+                                            @endif
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            @include('components.layouts.partials.table-inline-input', [
+                                                'fieldName' => 'owner',
+                                                'dhcpEntry' => $dhcpEntry,
+                                                'errors' => $validationErrors
+                                                ])
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            {{ $dhcpEntry->notes->sortByDesc('updated_at')->first()->note ?? '' }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            @if (array_key_exists($dhcpEntry->id, $editedEntries))
+                                                <input
+                                                    wire:model.live="editedEntries.{{ $dhcpEntry->id }}.is_ssd"
+                                                    type="checkbox"
+                                                    name="is_ssd"
+                                                    id="is_ssd"
+                                                    @if ($dhcpEntry->is_ssd)
+                                                        checked
+                                                    @endif
+                                                />
+
+                                            @else
+                                                @if ($dhcpEntry->is_ssd)
+                                                    <i class="fa-solid fa-check"></i>
+                                                @else
+                                                    <i class="fa-solid fa-times"></i>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            @if (array_key_exists($dhcpEntry->id, $editedEntries))
+                                                <input
+                                                    wire:model.live="editedEntries.{{ $dhcpEntry->id }}.is_active"
+                                                    type="checkbox"
+                                                    name="is_active"
+                                                    id="is_active"
+                                                    @if ($dhcpEntry->is_active)
+                                                        checked
+                                                    @endif
+                                                />
+
+                                            @else
+                                                <span
+                                                    class="inline-flex items-center rounded-md px-2 py-1 text-sm font-medium ring-1 ring-inset
+                                                    {{ $dhcpEntry->is_active ? ' bg-green-50 text-green-700 ring-green-600/20' : ' bg-red-50 text-red-700 ring-red-600/20'}}">
+                                                    {{ $dhcpEntry->is_active ? 'Active' : 'Inactive' }}
                                                 </span>
                                             @endif
-                                        </span>
-                                    </a>
-                                </th>
-                            @endforeach
-
-                            <th scope="col" class="relative py-3.5 pl-3 pr-0">
-                                <span class="sr-only">Edit/View</span>
-                            </th>
-
-                            <th scope="col" class="relative py-3.5 pl-3 pr-0">
-                                <span class="sr-only">Delete</span>
-                            </th>
-
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 bg-white">
-                        @foreach ($dhcpEntries as $dhcpEntry)
-                            <tr wire:key="{{ $dhcpEntry->id }}" >
-
-                                {{-- Edit row --}}
-                                {{-- <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                    <i wire:click.prevent="editDhcpEntry({{ $dhcpEntry->id }})" class="fa-solid fa-pencil opacity-30 hover:cursor-pointer"></i>
-                                </td> --}}
-
-                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                    <input
-                                        wire:model.live="selected"
-                                        type="checkbox"
-                                        value="{{ $dhcpEntry->id }}"
-                                        @checked(in_array($dhcpEntry->id, $selected))
-                                    />
-                                </td>
-
-                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                    @include('components.layouts.partials.table-inline-input', [
-                                        'fieldName' => 'hostname',
-                                        'currentEditedEntry' => $currentEditedEntry,
-                                        'dhcpEntry' => $dhcpEntry,
-                                        'errors' => $errors
-                                    ])
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    @include('components.layouts.partials.table-inline-input', [
-                                        'fieldName' => 'mac_address',
-                                        'currentEditedEntry' => $currentEditedEntry,
-                                        'dhcpEntry' => $dhcpEntry,
-                                        'errors' => $errors
-                                    ])
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    @include('components.layouts.partials.table-inline-input', [
-                                        'fieldName' => 'ip_address',
-                                        'currentEditedEntry' => $currentEditedEntry,
-                                        'dhcpEntry' => $dhcpEntry,
-                                        'errors' => $errors
-                                    ])
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    @if ($dhcpEntry->created_at)
-                                        {{ $dhcpEntry->created_at->format('d/m/Y H:i') }}
-                                    @endif
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    @if ($dhcpEntry->added_by)
-                                        {{ $dhcpEntry->added_by }}
-                                    @endif
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    @include('components.layouts.partials.table-inline-input', [
-                                        'fieldName' => 'owner',
-                                        'currentEditedEntry' => $currentEditedEntry,
-                                        'dhcpEntry' => $dhcpEntry,
-                                        'errors' => $errors
-                                        ])
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        {{ $dhcpEntry->notes->sortByDesc('updated_at')->first()->note ?? '' }}
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    @if ($currentEditedEntry['id'] == $dhcpEntry->id && $currentEditedEntry['field'] == 'is_ssd')
-                                        <input
-                                            wire:model.live="editedEntries.{{ $dhcpEntry->id }}.is_ssd"
-                                            type="checkbox"
-                                            name="isSsd"
-                                            id="isSsd"
-                                            @if (boolval($dhcpEntry->is_ssd) == true)
-                                                checked
-                                            @endif
-                                        />
-
-                                        <div class="mt-3 flex flex-row gap-2">
-                                            <span wire:click.prevent="updateField({{$dhcpEntry}}, 'is_ssd')"
-                                                class="text-indigo-600 hover:text-indigo-900 hover:cursor-pointer hover:underline">
-                                                Save
-                                            </span>
-                                            <span wire:click.prevent="cancelEditField('{{ $dhcpEntry->id }}')"
-                                                class="text-indigo-600 hover:text-indigo-900 hover:cursor-pointer hover:underline">
-                                                Cancel
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span wire:click.prevent="editField({{$dhcpEntry}}, 'is_ssd')" class="hover:cursor-pointer">
-                                            @if ($dhcpEntry->is_ssd)
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            <span>
+                                                @if ($dhcpEntry->is_imported)
                                                 <i class="fa-solid fa-check"></i>
-                                            @else
+                                                @else
                                                 <i class="fa-solid fa-times"></i>
-                                            @endif
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    @if ($currentEditedEntry['id'] == $dhcpEntry->id && $currentEditedEntry['field'] == 'is_active')
-                                        <input
-                                            wire:model.live="editedEntries.{{ $dhcpEntry->id }}.is_active"
-                                            type="checkbox"
-                                            name="isActive"
-                                            id="isActive"
-                                            @if (boolval($dhcpEntry->is_active) == true)
-                                                checked
-                                            @endif
-                                        />
-                                        <div class="mt-3 flex flex-row gap-2">
-                                            <span wire:click.prevent="updateField({{$dhcpEntry}}, 'is_active')"
-                                                class="text-indigo-600 hover:text-indigo-900 hover:cursor-pointer hover:underline">
-                                                Save
+                                                @endif
                                             </span>
-                                            <span wire:click.prevent="cancelEditField('{{ $dhcpEntry->id }}')"
-                                                class="text-indigo-600 hover:text-indigo-900 hover:cursor-pointer hover:underline">
-                                                Cancel
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span wire:click.prevent="editField({{$dhcpEntry}}, 'is_active')" class="hover:cursor-pointer">
-                                            <span
-                                                class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
-                                                {{ $dhcpEntry->is_active ? ' bg-green-50 text-green-700 ring-green-600/20' : ' bg-red-50 text-red-700 ring-red-600/20'}}">
-                                                {{ $dhcpEntry->is_active ? 'Active' : 'Inactive' }}
-                                            </span>
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    <span>
-                                        @if ($dhcpEntry->is_imported)
-                                        <i class="fa-solid fa-check"></i>
-                                        @else
-                                        <i class="fa-solid fa-times"></i>
-                                        @endif
-                                    </span>
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    <a href="{{ route('dhcp-entry.edit', $dhcpEntry->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit/View
-                                        <span class="sr-only">Edit/View</span>
-                                    </a>
-                                </td>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
+                                            <a href="{{ route('dhcp-entry.edit', $dhcpEntry->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit/View
+                                                <span class="sr-only">Edit/View</span>
+                                            </a>
+                                        </td>
 
-                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
-                                    <button
-                                        wire:click="deleteDhcpEntry('{{ $dhcpEntry->id }}')"
-                                        wire:confirm="Are you sure you want to delete this entry?"
-                                        class="hover:text-indigo-900 text-gray-600">
-                                        <i class="fa-solid fa-trash"></i>
-                                        <span class="sr-only">Delete</span>
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-base sm:pr-0">
+                                            <button
+                                                wire:click="deleteDhcpEntry('{{ $dhcpEntry->id }}')"
+                                                wire:confirm="Are you sure you want to delete this entry?"
+                                                class="hover:text-indigo-900 text-gray-600">
+                                                <i class="fa-solid fa-trash"></i>
+                                                <span class="sr-only">Delete</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Pagination --}}
+            <div class="mt-8">
+                {{ $dhcpEntries->links() }}
             </div>
         </div>
-    </div>
-
-
-    {{-- Pagination --}}
-    <div class="mt-8">
-        {{ $dhcpEntries->links() }}
-    </div>
+    @else
+    {{-- No DHCP entries info --}}
+        <div class="rounded-md bg-blue-50 mt-8 p-4">
+            <div class="flex align-middle">
+                <div class="flex-shrink-0">
+                    <i class="fa-solid fa-circle-info text-blue-400"></i>
+                </div>
+                <div class="ml-3 flex-1 md:flex md:justify-between">
+                    <p class="text-base text-gray-700">No DHCP entries found.</p>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

@@ -27,4 +27,19 @@ class DhcpEntry extends Model
     {
         return $this->hasMany(Note::class);
     }
+
+    public function getIsSsdAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getIsActiveAttribute($value)
+    {
+        return boolval($value);
+    }
+
+    public function getIsImportedAttribute($value)
+    {
+        return boolval($value);
+    }
 }
