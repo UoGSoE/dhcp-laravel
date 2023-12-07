@@ -31,3 +31,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/import-csv', \App\Livewire\ImportComponent::class)->name('import-csv.index');
     Route::get('/documentation', \App\Livewire\DocumentationComponent::class)->name('documentation');
 });
+
+Route::get('/dhcp-cache', [\App\Http\Controllers\DhcpCacheController::class, 'cache'])->name('dhcp-cache');

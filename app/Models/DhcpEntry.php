@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class DhcpEntry extends Model
 {
@@ -22,6 +23,17 @@ class DhcpEntry extends Model
         'is_active', // 'isActive' in Livewire
         'is_imported' // 'isImported' in Livewire
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            Cache::forget('dhcpFile');
+        });
+
+        static::deleted(function () {
+            Cache::forget('dhcpFile');
+        });
+    }
 
     public function notes()
     {
@@ -41,5 +53,24 @@ class DhcpEntry extends Model
     public function getIsImportedAttribute($value)
     {
         return boolval($value);
+    }
+
+    public function getDhcpFileFormat()
+    {
+        $formattedText = '';
+
+        if (!$this->is_active) {
+            $formattedText .= '### DISABLED ';
+        }
+
+        $formattedText .= "host {$this->hostname} { hardware ethernet {$this->mac_address}; ";
+
+        if ($this->ip_address) {
+            $formattedText .= "fixed-address {$this->ip_address}; default-lease-time 86400; max-lease-time 86400;";
+        }
+
+        $formattedText .= ' }';
+
+        return $formattedText;
     }
 }
