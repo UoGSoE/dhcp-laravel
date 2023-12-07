@@ -22,6 +22,7 @@ export default {
                 '1/2': '50%',
             },
             colors: {
+                primary: '#003865',
                 transparent: 'transparent',
                 current: 'currentColor',
                 black: colors.black,

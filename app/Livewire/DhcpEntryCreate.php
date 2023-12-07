@@ -92,4 +92,22 @@ class DhcpEntryCreate extends Component
 
         $this->redirect(route('dhcp-entries'));
     }
+
+    public function reformatMacAddress(): void
+    {
+        // Reformat mac address if entered with hyphens
+        if (substr_count($this->macAddress, '-') > 0) {
+            $this->macAddress = str_replace('-', ':', $this->macAddress);
+            $this->validateOnly('macAddress');
+            return;
+        }
+
+        // Reformat mac address if entered without colons/hyphens and is correct length
+        if (is_numeric($this->macAddress) && strlen($this->macAddress) == 12) {
+            $pairs = str_split($this->macAddress, 2);
+            $this->macAddress = implode(':', $pairs);
+        }
+
+
+    }
 }

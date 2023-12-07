@@ -35,7 +35,7 @@ class ExportController extends Controller
             'IP Address',
             'Owner',
             'Added By',
-            'SSD?',
+            'Campus System?',
             'Active?',
             'Imported?',
             'Created At',

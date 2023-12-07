@@ -10,7 +10,7 @@
         {{-- CSRF --}}
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Laravel</title>
+        <title>DHCP DB</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -22,20 +22,19 @@
 
     </head>
 
-    <body class="sm:w-full sm:h-full sm:max-w-full sm:max-h-full flex flex-col">
+    <body class="sm:w-full sm:h-max sm:max-w-full sm:max-h-full">
         <div id="app"
-            class="{{ auth()->guest() ? '' : 'flex sm:flex-row sm:h-full' }}
-            flex-col h-max">
+            class="{{ auth()->guest() ? 'sm:h-max' : 'sm:h-full' }} flex flex-col w-full">
 
             {{-- Navigation --}}
             @auth
-                <div class="sm:flex sm:h-full sm:w-max">
+                <div class="sm:flex sm:h-full w-full">
                     @include('components.layouts.navigation')
                 </div>
             @endauth
 
             {{-- Main content --}}
-            <div class="sm:w-full sm:overflow-x-scroll mt-12 px-4 sm:px-6 lg:px-8 w-full">
+            <div class="sm:w-full mt-12 px-4 sm:px-6 lg:px-8 w-full sm:overflow-x-auto">
                 @isset ($slot)
                     {{ $slot }}
                 @endisset

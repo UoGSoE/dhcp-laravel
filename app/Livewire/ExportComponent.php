@@ -45,7 +45,7 @@ class ExportComponent extends Component
             'IP Address',
             'Owner',
             'Added By',
-            'SSD?',
+            'Campus System?',
             'Active?',
             'Imported?',
             'Created At',

@@ -22,7 +22,7 @@
                         <div class="mt-2 sm:col-span-2 sm:mt-0">
                             <textarea wire:model.live="header" placeholder="Add header here..." id="header"
                                 name="header" rows="10"
-                                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"></textarea>
+                                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-base sm:leading-6"></textarea>
                         </div>
                     </div>
 
@@ -34,7 +34,7 @@
                         <div class="mt-2 sm:col-span-2 sm:mt-0">
                             <textarea wire:model.live="subnets" placeholder="Add subnets here..." id="subnets"
                                 name="subnets" rows="10"
-                                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"></textarea>
+                                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-base sm:leading-6"></textarea>
                         </div>
                     </div>
 
@@ -46,7 +46,7 @@
                         <div class="mt-2 sm:col-span-2 sm:mt-0">
                             <textarea wire:model.live="groups" placeholder="Add groups here..." id="groups"
                                 name="groups" rows="10"
-                                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"></textarea>
+                                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-base sm:leading-6"></textarea>
                         </div>
                     </div>
 
@@ -58,7 +58,7 @@
                         <div class="mt-2 sm:col-span-2 sm:mt-0">
                             <textarea wire:model.live="footer" placeholder="Add footer here..." id="footer"
                                 name="footer" rows="10"
-                                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"></textarea>
+                                class="block w-full max-w-2xl rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-base sm:leading-6"></textarea>
                         </div>
                     </div>
 
@@ -77,9 +77,9 @@
                 disabled
                 @endif
                 class="{{ (count($errors) > 0) ? 'disabled:opacity-75 disabled
-                aria-disabled ' : '' }} inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-base
-                font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
-                focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                aria-disabled ' : '' }} inline-flex justify-center rounded-md bg-primary px-3 py-2 text-base
+                font-semibold text-white shadow-sm hover:bg-primary focus-visible:outline focus-visible:outline-2
+                focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Save
             </button>
         </div>

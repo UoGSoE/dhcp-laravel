@@ -16,8 +16,8 @@ class DhcpEntryTable extends Component
     public int $perPage = 5;
     public string $sortField = 'created_at';
     public bool $sortAsc = true;
-    public string $activeFilter = "";
-    public ?bool $active = null;
+    public string $activeFilter = "true";
+    public ?bool $active = true;
     // protected $queryString = ['search', 'perPage', 'sortField', 'sortAsc', 'active',];
 
     public bool $selectPage = false;

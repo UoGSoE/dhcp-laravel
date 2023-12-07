@@ -24,7 +24,7 @@
             </label>
             <div class="mt-2 sm:col-span-2 sm:mt-0">
                 <div
-                    class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary sm:max-w-md">
 
                     <input
                         wire:model.live="uploadedCsv"
@@ -50,9 +50,9 @@
                 disabled
             @endif
             class="{{ (count($errors) > 0) ? 'disabled:opacity-75 disabled
-            aria-disabled ' : '' }} inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-base
-            font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
-            focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            aria-disabled ' : '' }} inline-flex justify-center rounded-md bg-primary px-3 py-2 text-base
+            font-semibold text-white shadow-sm hover:bg-primary focus-visible:outline focus-visible:outline-2
+            focus-visible:outline-offset-2 focus-visible:outline-primary">
             Upload
         </button>
     </form>
