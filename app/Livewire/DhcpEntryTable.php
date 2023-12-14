@@ -13,11 +13,11 @@ class DhcpEntryTable extends Component
     use WithPagination;
 
     public string $search = '';
-    public int $perPage = 5;
+    public int $perPage = 2;
     public string $sortField = 'created_at';
     public bool $sortAsc = true;
     public string $activeFilter = "true";
-    public ?bool $active = true;
+    public ?bool $active;
     // protected $queryString = ['search', 'perPage', 'sortField', 'sortAsc', 'active',];
 
     public bool $selectPage = false;
@@ -98,7 +98,7 @@ class DhcpEntryTable extends Component
         $this->resetPage();
     }
 
-    public function updatedActiveFilter(): void
+    public function updateActiveAttribute(): void
     {
         if ($this->activeFilter == "true") {
             $this->active = true;
@@ -107,6 +107,12 @@ class DhcpEntryTable extends Component
         } else {
             $this->active = null;
         }
+
+    }
+
+    public function updatedActiveFilter(): void
+    {
+        $this->updateActiveAttribute();
     }
 
     public function getResultsProperty()
@@ -132,6 +138,8 @@ class DhcpEntryTable extends Component
 
     public function render()
     {
+        $this->updateActiveAttribute();
+
         if ($this->selectAll) {
             $this->selected = $this->results->get()->pluck('id')->map(fn ($id) => (string) $id)->toArray();
         }
@@ -142,6 +150,7 @@ class DhcpEntryTable extends Component
 
     }
 
+    // Runs when all entries on current page are selected
     public function updatedSelectPage(bool $value)
     {
         $this->selected = $value

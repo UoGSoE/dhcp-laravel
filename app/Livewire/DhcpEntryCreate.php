@@ -107,7 +107,5 @@ class DhcpEntryCreate extends Component
             $pairs = str_split($this->macAddress, 2);
             $this->macAddress = implode(':', $pairs);
         }
-
-
     }
 }

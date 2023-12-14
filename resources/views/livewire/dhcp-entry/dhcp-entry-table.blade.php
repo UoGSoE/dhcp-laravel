@@ -113,11 +113,11 @@
     </div>
 
     @if (count($dhcpEntries) > 0 || $search !== '' || $activeFilter !== '')
-        <div>
+        <div class="">
             {{-- Table --}}
             <div class="mt-8 flow-root">
-                <div class="my-2 overflow-x-auto">
-                    <div class="inline-block min-w-full py-2 align-middle pl-1">
+                <div class="my-2 overflow-x-auto pb-20">
+                    <div class="inline-block min-w-full py-2 align-middle pl-1 -mb-4">
 
                         <div class="mb-4">
                             @if ($selectPage)
@@ -188,7 +188,6 @@
                                     <tr wire:key="{{ $dhcpEntry->id }}" >
 
                                         {{-- Edit row --}}
-
                                         <td class="whitespace-nowrap py-4 pl-4 pr-6 text-base font-medium text-gray-900 sm:pl-0">
 
                                             @if (array_key_exists($dhcpEntry->id, $editRowActive) && $editRowActive[$dhcpEntry->id] === true)
@@ -207,7 +206,7 @@
 
                                         </td>
 
-                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-base font-medium text-gray-900 sm:pl-0">
+                                        <td class="whitespace-nowrap px-3 py-4 text-base font-medium text-gray-900 sm:pl-0">
                                             <input
                                                 wire:model.live="selected"
                                                 type="checkbox"
@@ -216,13 +215,14 @@
                                             />
                                         </td>
 
-                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-base font-medium text-gray-900 sm:pl-0">
+                                        <td class="whitespace-nowrap px-3 py-4 text-base font-medium text-gray-900 sm:pl-0">
                                             @include('components.layouts.partials.table-inline-input', [
                                                 'fieldName' => 'hostname',
                                                 'dhcpEntry' => $dhcpEntry,
                                                 'errors' => $validationErrors
                                             ])
                                         </td>
+
                                         <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
                                             @include('components.layouts.partials.table-inline-input', [
                                                 'fieldName' => 'mac_address',
@@ -252,7 +252,7 @@
                                                 'fieldName' => 'owner',
                                                 'dhcpEntry' => $dhcpEntry,
                                                 'errors' => $validationErrors
-                                                ])
+                                            ])
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-4 text-base text-gray-500">
                                             {{ $dhcpEntry->notes->sortByDesc('updated_at')->first()->note ?? '' }}
@@ -329,7 +329,7 @@
             </div>
 
             {{-- Pagination --}}
-            <div class="mt-8">
+            <div class="mt-20">
                 {{ $dhcpEntries->links() }}
             </div>
         </div>

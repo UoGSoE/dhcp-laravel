@@ -22,19 +22,19 @@
 
     </head>
 
-    <body class="sm:w-full sm:h-max sm:max-w-full sm:max-h-full">
+    <body class="sm:w-full sm:max-w-full h-full">
         <div id="app"
             class="{{ auth()->guest() ? 'sm:h-max' : 'sm:h-full' }} flex flex-col w-full">
 
             {{-- Navigation --}}
             @auth
-                <div class="sm:flex sm:h-full w-full">
+                <div class="sm:flex w-full">
                     @include('components.layouts.navigation')
                 </div>
             @endauth
 
             {{-- Main content --}}
-            <div class="sm:w-full mt-12 px-4 sm:px-6 lg:px-8 w-full sm:overflow-x-auto">
+            <div class="sm:w-full mt-12 px-4 sm:px-6 lg:px-8 w-full sm:overflow-x-auto min-h-full h-full">
                 @isset ($slot)
                     {{ $slot }}
                 @endisset
