@@ -2,14 +2,10 @@
 
 namespace App\Livewire;
 
-use Livewire\Attributes\Validate;
-use App\Models\DhcpEntry;
-use App\Models\Note;
-use Carbon\Carbon;
+use App\Jobs\ImportDhcpEntriesJob;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
-use DateTime;
 use Livewire\WithFileUploads;
 
 class ImportComponent extends Component
@@ -27,56 +23,11 @@ class ImportComponent extends Component
         return view('livewire.import-component');
     }
 
-    public function import(Request $request)
+    public function import(Request $request): void
     {
         $this->validate();
 
-        $stream = fopen($this->uploadedCsv->getRealPath(), 'r');
-
-        $data = [];
-        while(($row = fgetcsv($stream)) !== false) {
-            $data[] = $row;
-        }
-        fclose($stream);
-
-        // Remove header element from dhcp data
-        array_shift($data);
-
-        $dhcpEntries = [];
-        $notes = [];
-
-        foreach ($data as $entry) {
-            $dhcpEntries[] = [
-                'id' => $entry[0],
-                'hostname' => $entry[1],
-                'mac_address' => $entry[2],
-                'ip_address' => $entry[3] ? $entry[3] : null,
-                'owner' => $entry[4],
-                'added_by' => $entry[5],
-                'is_ssd' => strtolower($entry[6]) === "true",
-                'is_active' => strtolower($entry[7]) === "true",
-                'is_imported' => true,
-                'created_at' => (new DateTime)->setTimestamp(strtotime($entry[9])),
-                'updated_at' => (new DateTime)->setTimestamp(strtotime($entry[10])),
-            ];
-
-            if ($entry[11] !== "") {
-                $note = json_decode($entry[11], true);
-                $note['created_at'] = (new DateTime)->setTimestamp(strtotime($note['created_at']));
-                $note['updated_at'] = (new DateTime)->setTimestamp(strtotime($note['updated_at']));
-                $notes[] = $note;
-            }
-        }
-
-        try {
-            DhcpEntry::insert($dhcpEntries);
-            Note::insert($notes);
-        } catch (\Exception $e) {
-            $this->importSuccess = false;
-            session()->flash('error', "Error importing data: {$e->getMessage()}");
-            $this->showAlertMessage = true;
-            return;
-        }
+//        ImportDhcpEntriesJob::dispatch($this->uploadedCsv->getRealPath());
 
         $this->importSuccess = true;
         session()->flash('success', 'Data imported successfully');

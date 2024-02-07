@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Events\DhcpChangedEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 
 class DhcpEntry extends Model
 {
@@ -27,11 +27,11 @@ class DhcpEntry extends Model
     protected static function booted(): void
     {
         static::saved(function () {
-            Cache::forget('dhcpFile');
+            DhcpChangedEvent::dispatch();
         });
 
         static::deleted(function () {
-            Cache::forget('dhcpFile');
+            DhcpChangedEvent::dispatch();
         });
     }
 

@@ -13,11 +13,11 @@ class DhcpEntryTable extends Component
     use WithPagination;
 
     public string $search = '';
-    public int $perPage = 2;
+    public int $perPage = 10;
     public string $sortField = 'created_at';
     public bool $sortAsc = true;
-    public string $activeFilter = "true";
-    public ?bool $active;
+    public string $activeFilter = "";
+    public ?bool $active = null;
     // protected $queryString = ['search', 'perPage', 'sortField', 'sortAsc', 'active',];
 
     public bool $selectPage = false;
