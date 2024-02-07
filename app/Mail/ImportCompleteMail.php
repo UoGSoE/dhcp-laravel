@@ -29,7 +29,7 @@ class ImportCompleteMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.import_complete',
+            view: 'mail.import_complete',
         );
     }
     public function attachments(): array

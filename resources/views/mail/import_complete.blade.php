@@ -1,13 +1,13 @@
-<x-mail::message>
-# Introduction
+Hello,<br/><br/>
 
 @if(count($errors) > 0)
-    The following errors were found:
+    The following errors were found:<br/>
+
     @foreach($errors as $error)
-        - {{ $error }}
+        {{ $error }}<br/>
     @endforeach
 @endif
 
+<br/>
 Thanks,<br>
 {{ config('app.name') }}
-</x-mail::message>

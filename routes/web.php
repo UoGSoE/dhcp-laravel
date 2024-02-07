@@ -28,17 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dhcp-entry/config', \App\Livewire\DhcpConfigForm::class)->name('dhcp-config');
     Route::get('/logout', [\App\Http\Controllers\LogoutController::class, 'logout'])->name('logout');
     Route::get('/export', \App\Livewire\ExportComponent::class)->name('export.index');
-//    Route::get('/import-csv', \App\Livewire\ImportComponent::class)->name('import-csv.index');
     Route::get('/import-csv', [\App\Http\Controllers\ImportController::class, 'render'])->name('import-csv.index');
     Route::post('/import-test', [\App\Http\Controllers\ImportController::class, 'import'])->name('import');
     Route::get('/documentation', \App\Livewire\DocumentationComponent::class)->name('documentation');
 });
 
 Route::get('/dhcp-cache', [\App\Http\Controllers\DhcpCacheController::class, 'cache'])->name('dhcp-cache');
-
-
-Route::get('/test-job', function() {
-    \App\Jobs\TestJob::dispatch();
-    // \App\Jobs\ImportDhcpEntriesJob::dispatch();
-    return redirect()->route('index');
-});
