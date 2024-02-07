@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Ramsey\Uuid\Uuid;
 use Throwable;
 
 class ImportDhcpEntriesJob implements ShouldQueue
@@ -38,8 +39,6 @@ class ImportDhcpEntriesJob implements ShouldQueue
     public function handle()
     {
         Log::info('Starting job: import DHCP entries');
-
-        $cacheKey = 'dhcp-import-' . now()->timestamp;
 
         // Format data as required for dhcp entry model
         $dhcpEntries = [];
@@ -90,6 +89,8 @@ class ImportDhcpEntriesJob implements ShouldQueue
                 ];
 
                 Log::info("Validation failed for DHCP entry '{$failedDhcpEntry['dhcpEntryId']}' ({$failedDhcpEntry['dhcpHostname']}) : {$failedDhcpEntry['errorMessage']}");
+
+                $cacheKey = 'dhcp-import-' . now()->timestamp . '-' . Uuid::uuid4()->toString();
                 (new ErrorCache($cacheKey))->add(json_encode($failedDhcpEntry));
             }
         }
