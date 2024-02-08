@@ -10,7 +10,7 @@ class ImportController extends Controller
 {
     public function render()
     {
-        return view('livewire.import-component-test');
+        return view('components.layouts.import');
     }
 
     public function import(Request $request): void

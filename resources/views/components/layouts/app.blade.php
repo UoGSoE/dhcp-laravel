@@ -38,6 +38,11 @@
                 @isset ($slot)
                     {{ $slot }}
                 @endisset
+
+                {{-- Render non-Livewire import content if route matches --}}
+                @if (\Illuminate\Support\Facades\Route::currentRouteName() == 'import-csv.index')
+                    @yield('import-csv')
+                @endif
             </div>
         </div>
 

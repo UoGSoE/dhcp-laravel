@@ -79,7 +79,7 @@ class ImportDhcpEntriesJob implements ShouldQueue
         $cacheKey = 'dhcp-import-' . now()->timestamp;
         if ($validator->fails()) {
             foreach ($validator->errors()->toArray() as $errorKey => $errorMsg) {
-                $arrayKey = preg_replace("/([.]+)([a-z0-9]+)/", "", $errorKey);
+                $arrayKey = preg_replace("/([.]+)([^.]+)/", "", $errorKey);
                 $property = preg_replace("/^([^.]+)([.])/", "", $errorKey);
 
                 $failedDhcpEntry = [
@@ -106,6 +106,16 @@ class ImportDhcpEntriesJob implements ShouldQueue
         }
 
         $email = $this->emailAddress;
+        $cache = new ErrorCache($cacheKey);
+        $errors = $cache->get();
+
+        // If no valid batch jobs and cached errors exist, send email and return - as bus does not run
+        if (empty($batchJobs) && !empty($errors)) {
+            Log::info("Job completed with errors: import DHCP entries. No jobs passed validation for batch processing.");
+            Mail::to($email)->queue(new ImportCompleteMail($errors));
+            $cache->delete();
+            return;
+        }
 
         // Dispatch batch jobs
         Bus::batch($batchJobs)
@@ -115,12 +125,10 @@ class ImportDhcpEntriesJob implements ShouldQueue
 
                (new ErrorCache($cacheKey))->add($e->getMessage());
             })
-            ->finally(function() use ($cacheKey, $email) {
-                Log::info("Job finished: import DHCP entries");
-                $cache = new ErrorCache($cacheKey);
-                $errors = $cache->get();
-                $cache->delete();
+            ->finally(function() use ($cacheKey, $email, $cache, $errors) {
+                Log::info("Batch job completed: import DHCP entry rows");
                 Mail::to($email)->queue(new ImportCompleteMail($errors));
+                $cache->delete();
             })
             ->dispatch();
     }
