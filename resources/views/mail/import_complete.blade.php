@@ -1,5 +1,7 @@
 Hello,<br/><br/>
 
+Import DHCP entries has completed.<br/><br/>
+
 @if(count($errors) > 0)
     The following errors were found:<br/>
 

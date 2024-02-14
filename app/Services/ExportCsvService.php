@@ -37,16 +37,29 @@ class ExportCsvService
         }, "{$this->filename}.csv", $csvHeaders);
     }
 
-    public function exportCsvToFile(string $filePath): void
+    public function writeCsvDataToFile(string $fileName): string
     {
         $this->writeCsv();
-        Storage::put($filePath, $this->writer->toString());
+        Storage::put($fileName, $this->writer->toString());
+
+        return Storage::path($fileName);
+    }
+
+    public function appendCsvDataToFile(string $fileName): string
+    {
+        $this->writeCsv();
+        Storage::append($fileName, $this->writer->toString(), null);
+
+        return Storage::path($fileName);
     }
 
     private function writeCsv(): void
     {
-        $this->writer->insertOne($this->dataHeaders);
-        $this->data->each(function ($item) {
+        if (!empty($this->dataHeaders)) {
+            $this->writer->insertOne($this->dataHeaders);
+        }
+
+        foreach ($this->data as $item) {
             $row = [];
 
             foreach ($this->dataProperties as $property) {
@@ -61,7 +74,7 @@ class ExportCsvService
             }
 
             $this->writer->insertOne($row);
-        });
+        };
     }
 
 

@@ -14,7 +14,7 @@ class ImportCompleteMail extends Mailable
     use Queueable, SerializesModels;
 
     public function __construct(
-        public array $errors,
+        public array $errors = [],
     )
     {
     }

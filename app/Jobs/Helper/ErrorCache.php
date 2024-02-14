@@ -4,7 +4,7 @@ namespace App\Jobs\Helper;
 
 use Illuminate\Support\Facades\Redis;
 
-class ErrorCache
+class ErrorCache implements ErrorCacheInterface
 {
     public function __construct(
         public string $cacheKey

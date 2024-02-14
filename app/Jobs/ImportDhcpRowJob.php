@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Jobs\Helper\ErrorCache;
+use App\Jobs\Helper\ErrorCacheInterface;
 use App\Models\DhcpEntry;
 use App\Models\Note;
 use Illuminate\Bus\Batchable;
@@ -13,7 +14,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 
 class ImportDhcpRowJob implements ShouldQueue
 {
@@ -21,7 +24,7 @@ class ImportDhcpRowJob implements ShouldQueue
 
     public function __construct(
         private array $dhcpEntry,
-//        private string $cacheKey
+        private string $cacheKey
     )
     {
     }
@@ -31,7 +34,8 @@ class ImportDhcpRowJob implements ShouldQueue
         if ($this->batch()->cancelled()) {
             return;
         }
-        Log::info($this->dhcpEntry['id']);
+
+        Log::info("Import DHCP row job running: {$this->dhcpEntry['id']}");
 
         DhcpEntry::updateOrCreate([
             'id' => $this->dhcpEntry['id']
@@ -45,10 +49,12 @@ class ImportDhcpRowJob implements ShouldQueue
         }
     }
 
-    public function failed($e)
+    public function failed($e): void
     {
         Log::info("Import DHCP row job failed: {$e->getMessage()} ");
-//        $cache = new ErrorCache($this->cacheKey);
-//        $cache->add($e->getMessage() . $this->dhcpEntry['id']);
+        App::get(ErrorCacheInterface::class)->add(
+            "Import DHCP row job failed for entry '{$this->dhcpEntry['id']}' ($this->dhcpEntry['hostname']}). " .
+            "Error: {$e->getMessage()}"
+        );
     }
 }
