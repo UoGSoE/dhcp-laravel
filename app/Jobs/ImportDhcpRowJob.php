@@ -2,13 +2,11 @@
 
 namespace App\Jobs;
 
-use App\Jobs\Helper\ErrorCache;
 use App\Jobs\Helper\ErrorCacheInterface;
 use App\Models\DhcpEntry;
 use App\Models\Note;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -16,7 +14,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
 
 class ImportDhcpRowJob implements ShouldQueue
 {

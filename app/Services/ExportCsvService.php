@@ -2,10 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\DhcpEntry;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Writer;
 use Symfony\Component\HttpFoundation\StreamedResponse;

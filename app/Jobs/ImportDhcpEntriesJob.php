@@ -2,11 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Jobs\Helper\ErrorCache;
 use App\Jobs\Helper\ErrorCacheInterface;
 use App\Mail\ImportCompleteMail;
-use App\Models\DhcpEntry;
-use DateTime;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,13 +11,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Validator;
-use Ramsey\Uuid\Uuid;
 use Throwable;
 
 class ImportDhcpEntriesJob implements ShouldQueue
