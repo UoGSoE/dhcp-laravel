@@ -2,11 +2,6 @@
 
  @section('import-csv')
     <div class="w-full">
-
-        @if ((session('info') || session('success') || session('error')) && $showAlertMessage)
-            @include('components.alerts.alert')
-        @endif
-
         <div class="justify-around sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <h1 class="text-lg font-semibold leading-6 text-gray-900">

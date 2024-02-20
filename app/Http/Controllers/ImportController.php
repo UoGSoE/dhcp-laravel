@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ImportDhcpEntriesJob;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class ImportController extends Controller
 {
@@ -12,7 +14,7 @@ class ImportController extends Controller
         return view('components.layouts.import');
     }
 
-    public function import(Request $request): void
+    public function import(Request $request): RedirectResponse
     {
         $request->validate([
             'upload' => 'required|mimes:csv'
@@ -34,5 +36,7 @@ class ImportController extends Controller
         ImportDhcpEntriesJob::dispatch($data, $request->user()->email);
 
         unlink($filePath);
+
+        return Redirect::route('index')->with('info', 'Import started. You will receive an email notifying you of its progress.');
     }
 }

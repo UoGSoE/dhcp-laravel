@@ -64,7 +64,7 @@ class ExportCsvService
                 if (is_int($item->$property) || is_bool($item->$property)) {
                     $row[] = $item->$property ? 'True' : 'False';
                 } elseif ($property == 'notes') {
-                    $row[] = $item->$property->all() ? json_encode($item->$property->sortByDesc('updated_at')->first(), JSON_PRETTY_PRINT) : '';
+                    $row[] = $item->$property->all() ? json_encode($item->$property->sortByDesc('updated_at'), JSON_PRETTY_PRINT) : '';
                 } else {
                     $row[] = $item->$property;
                 }

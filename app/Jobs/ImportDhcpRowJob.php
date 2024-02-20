@@ -12,7 +12,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class ImportDhcpRowJob implements ShouldQueue
@@ -38,19 +37,20 @@ class ImportDhcpRowJob implements ShouldQueue
             'id' => $this->dhcpEntry['id']
         ], Arr::except($this->dhcpEntry, 'note'));
 
-
         if ($this->dhcpEntry['note']) {
-            Note::updateOrCreate([
-                'id' => $this->dhcpEntry['note']['id']
-            ], $this->dhcpEntry['note']);
+            foreach ($this->dhcpEntry['note'] as $note) {
+                Note::updateOrCreate([
+                    'id' => $note['id']
+                ], $note);
+            }
         }
     }
 
     public function failed($e): void
     {
         Log::info("Import DHCP row job failed: {$e->getMessage()} ");
-        App::get(ErrorCacheInterface::class)->add(
-            "Import DHCP row job failed for entry '{$this->dhcpEntry['id']}' ($this->dhcpEntry['hostname']}). " .
+        app(ErrorCacheInterface::class, ['cacheKey' => $this->cacheKey])->add(
+            "Import DHCP row job failed for entry '{$this->dhcpEntry['id']}' ({$this->dhcpEntry['hostname']}). " .
             "Error: {$e->getMessage()}"
         );
     }

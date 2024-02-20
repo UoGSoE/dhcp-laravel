@@ -10,7 +10,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -48,7 +47,7 @@ class ImportDhcpEntriesJob implements ShouldQueue
                 'is_imported' => true,
                 'created_at' => $entry[9],
                 'updated_at' => $entry[10],
-                'note' => $entry[11] !== "" ? json_decode($entry[11], true) : null,
+                'note' => $entry[11] !== "" ? collect(json_decode($entry[11], true)) : null,
             ];
         }
 
@@ -65,11 +64,17 @@ class ImportDhcpEntriesJob implements ShouldQueue
             '*.is_imported' => 'required|boolean',
             '*.created_at' => 'required|string',
             '*.updated_at' => 'required|string',
-            '*.note' => 'nullable|array'
+            '*.note.*.id' => 'required|uuid|distinct',
+            '*.note.*.note' => 'required|string',
+            '*.note.*.created_by' => 'required|string',
+            '*.note.*.dhcp_entry_id' => 'required|uuid',
+            '*.note.*.created_at' => 'required|string',
+            '*.note.*.updated_at' => 'required|string',
         ]);
 
         // Log failed entries and add error to cache
         $cacheKey = 'dhcp-import-' . now()->timestamp;
+
         if ($validator->fails()) {
             foreach ($validator->errors()->toArray() as $errorKey => $errorMsg) {
                 $arrayKey = preg_replace("/([.]+)([^.]+)/", "", $errorKey);
@@ -133,6 +138,6 @@ class ImportDhcpEntriesJob implements ShouldQueue
 
     private function getErrorCache(string $cacheKey)
     {
-        return App::get(ErrorCacheInterface::class);
+        return app(ErrorCacheInterface::class, ['cacheKey' => $cacheKey]);
     }
 }

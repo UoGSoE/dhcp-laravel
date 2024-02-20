@@ -7,6 +7,7 @@ use App\Services\ExportCsvService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportController extends Controller
@@ -24,8 +25,8 @@ class ExportController extends Controller
     {
 
         if ($this->dhcpData->isEmpty()) {
+            Session::flash('error', 'No data to export.');
             throw new \Exception('No data to export');
-            //todo
         }
 
         $dataHeaders = [
@@ -51,6 +52,11 @@ class ExportController extends Controller
 
     public function exportJson(): JsonResponse
     {
+        if ($this->dhcpData->isEmpty()) {
+            Session::flash('error', 'No data to export.');
+            throw new \Exception('No data to export');
+        }
+
         $jsonHeaders = [
             'Content-Type: application/json; charset=utf-8',
             'Content-Disposition' => 'attachment; filename="' . $this->filename . '.json"',

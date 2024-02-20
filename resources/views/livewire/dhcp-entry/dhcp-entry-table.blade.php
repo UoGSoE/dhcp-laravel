@@ -44,7 +44,7 @@
 
 <div class="w-full">
     {{-- Alert messages --}}
-    @if ((session('info') || session('success') || session('error')) && $showAlertMessage)
+    @if ((session('info') || session('success') || session('error')))
         @include('components.alerts.alert')
     @endif
 
