@@ -21,7 +21,9 @@ class DhcpEntry extends Model
         'added_by', // 'addedBy' in Livewire
         'is_ssd', // 'isSsd' in Livewire
         'is_active', // 'isActive' in Livewire
-        'is_imported' // 'isImported' in Livewire
+        'is_imported', // 'isImported' in Livewire,
+        'created_at', // 'createdAt' in Livewire,
+        'updated_at' // 'updatedAt' in Livewire
     ];
 
     protected static function booted(): void

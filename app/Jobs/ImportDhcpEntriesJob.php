@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Jobs\Helper\ErrorCacheInterface;
 use App\Mail\ImportCompleteMail;
+use DateTime;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -34,6 +36,7 @@ class ImportDhcpEntriesJob implements ShouldQueue
 
         // Format data as required for dhcp entry model
         $dhcpEntries = [];
+
         foreach ($this->data as $entry) {
             $dhcpEntries[] = [
                 'id' => $entry[0],
@@ -45,8 +48,8 @@ class ImportDhcpEntriesJob implements ShouldQueue
                 'is_ssd' => strtolower($entry[6]) === "true",
                 'is_active' => strtolower($entry[7]) === "true",
                 'is_imported' => true,
-                'created_at' => $entry[9],
-                'updated_at' => $entry[10],
+                'created_at' => \date('Y-m-d H:i:s', strtotime($entry[9])),
+                'updated_at' => \date('Y-m-d H:i:s', strtotime($entry[10])),
                 'note' => $entry[11] !== "" ? collect(json_decode($entry[11], true)) : null,
             ];
         }

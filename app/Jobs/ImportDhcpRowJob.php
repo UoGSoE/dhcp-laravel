@@ -34,7 +34,9 @@ class ImportDhcpRowJob implements ShouldQueue
         Log::info("Import DHCP row job running: {$this->dhcpEntry['id']}");
 
         DhcpEntry::updateOrCreate([
-            'id' => $this->dhcpEntry['id']
+            'id' => $this->dhcpEntry['id'],
+            'created_at' => $this->dhcpEntry['created_at'],
+            'updated_at' => $this->dhcpEntry['updated_at']
         ], Arr::except($this->dhcpEntry, 'note'));
 
         if ($this->dhcpEntry['note']) {
