@@ -42,22 +42,32 @@ class DhcpEntry extends Model
         return $this->hasMany(Note::class);
     }
 
-    public function getIsSsdAttribute($value)
+    public function latestNote()
+    {
+        return $this->hasOne(Note::class)->latestOfMany();
+    }
+
+    public function scopeIsActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function getIsSsdAttribute($value): bool
     {
         return boolval($value);
     }
 
-    public function getIsActiveAttribute($value)
+    public function getIsActiveAttribute($value): bool
     {
         return boolval($value);
     }
 
-    public function getIsImportedAttribute($value)
+    public function getIsImportedAttribute($value): bool
     {
         return boolval($value);
     }
 
-    public function getDhcpFileFormat()
+    public function getDhcpFileFormat(): string
     {
         $formattedText = '';
 

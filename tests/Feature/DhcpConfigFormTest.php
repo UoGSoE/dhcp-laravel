@@ -32,7 +32,7 @@ class DhcpConfigFormTest extends TestCase
         $response->assertSeeLivewire(DhcpConfigForm::class);
     }
 
-    public function test_data_is_retrieved_if_model_exists(): void
+    public function test_livewire_component_loads_correct_config_data(): void
     {
         $this->dhcpConfig = DhcpConfig::factory()->create([
             'header' => 'Lorem ipsum DHCP Header',
@@ -57,7 +57,7 @@ class DhcpConfigFormTest extends TestCase
             ->assertSet('footer', $this->dhcpConfig->footer);
     }
 
-    public function test_data_is_null_if_model_does_not_exist(): void
+    public function test_liveweire_component_loads_empty_config_data_when_no_config_exists(): void
     {
         Livewire::actingAs($this->user)
             ->test(DhcpConfigForm::class)

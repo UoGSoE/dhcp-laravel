@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 
 class DhcpCacheController extends Controller
 {
-    public function cache()
+    public function show()
     {
         $dhcpConfigModel = DhcpConfig::first();
         $dhcpEntryModels = DhcpEntry::all();

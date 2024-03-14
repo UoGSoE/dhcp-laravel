@@ -11,7 +11,7 @@ class DhcpEntryCreate extends Component
 {
     #[Validate([
         'hostname' => 'required_unless:ipAddress,null|unique:dhcp_entries,hostname',
-        'macAddress' => 'required|unique:dhcp_entries,mac_address|mac_address',
+        'macAddress' => 'required|mac_address|unique:dhcp_entries,mac_address',
         'ipAddress' => 'nullable|ip|unique:dhcp_entries,ip_address',
         'owner' => 'required',
         'addedBy' => 'required',
@@ -24,16 +24,16 @@ class DhcpEntryCreate extends Component
     public string $id;
     public string $hostname = '';
     public string $macAddress = '';
-    public ?string $ipAddress = null;
+    public string $ipAddress = '';
     public string $owner = '';
     public string $addedBy = '';
+    public string $note = '';
     public bool $isSsd = false;
     public bool $isActive = true;
     public bool $isImported = false;
 
-    public ?string $note = null;
 
-    public function mount()
+    public function mount(): void
     {
         $this->id = Uuid::uuid4()->toString();
     }
@@ -56,13 +56,13 @@ class DhcpEntryCreate extends Component
     {
         $this->addedBy = auth()->user()->full_name;
 
-        if (!$this->hostname || $this->hostname === '') {
+        if (!$this->hostname) {
             $this->hostname = 'eng-pool-' . $this->id;
         }
 
         $this->validate();
 
-        $dhcpEntryData = [
+        $dhcpEntry = DhcpEntry::create([
             'id' => $this->id,
             'mac_address' => $this->macAddress,
             'hostname' => $this->hostname,
@@ -72,21 +72,14 @@ class DhcpEntryCreate extends Component
             'is_ssd' => $this->isSsd,
             'is_active' => $this->isActive,
             'is_imported' => $this->isImported,
-        ];
+        ]);
 
-        $dhcpEntry = DhcpEntry::create($dhcpEntryData);
-
-        if (!$this->note || $this->note == "") {
-            $this->redirect(route('dhcp-entries'));
-            return;
+        if ($this->note) {
+            $dhcpEntry->notes()->create([
+                'note' => strip_tags($this->note),
+                'created_by' => $this->addedBy,
+            ]);
         }
-
-        $noteData = [
-            'note' => strip_tags($this->note),
-            'created_by' => $this->addedBy,
-        ];
-
-        $dhcpEntry->notes()->create($noteData);
 
         session()->flash('success', 'DHCP entry created successfully.');
 
@@ -95,17 +88,15 @@ class DhcpEntryCreate extends Component
 
     public function reformatMacAddress(): void
     {
-        // Reformat mac address if entered with hyphens
-        if (substr_count($this->macAddress, '-') > 0) {
-            $this->macAddress = str_replace('-', ':', $this->macAddress);
-            $this->validateOnly('macAddress');
-            return;
-        }
-
         // Reformat mac address if entered without colons/hyphens and is correct length
         if (is_numeric($this->macAddress) && strlen($this->macAddress) == 12) {
             $pairs = str_split($this->macAddress, 2);
             $this->macAddress = implode(':', $pairs);
         }
+
+        // Reformat mac address if entered with hyphens
+        $this->macAddress = str_replace('-', ':', $this->macAddress);
+
+        $this->validateOnly('macAddress');
     }
 }

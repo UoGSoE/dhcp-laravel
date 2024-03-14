@@ -17,7 +17,7 @@ class HomepageTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    public function test_index_page_is_accessible(): void
+    public function test_authenticated_users_can_access_the_homepage(): void
     {
         $user = User::factory()->make();
 

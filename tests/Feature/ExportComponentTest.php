@@ -57,10 +57,11 @@ class ExportComponentTest extends TestCase
         ]);
     }
 
-    public function test_component_renders(): void
+    public function test_livewire_component_renders(): void
     {
         $response = $this->get(route('export.index'));
         $response->assertStatus(200);
+        $response->assertSeeLivewire(ExportComponent::class);
     }
 
     public function test_export_to_csv_successful(): void

@@ -15,16 +15,16 @@ class DhcpEntryEdit extends Component
     public ?DhcpEntry $dhcpEntry;
 
     public string $id;
-    public ?string $macAddress;
-    public ?string $hostname;
+    public string $macAddress = '';
+    public string $hostname = '';
     public ?string $ipAddress = null;
-    public ?string $owner;
-    public ?string $addedBy;
+    public string $owner = '';
+    public string $addedBy = '';
+    public string $note = '';
     public ?bool $isSsd;
     public ?bool $isActive;
     public ?bool $isImported;
-    public ?string $note = null;
-    public Collection $notes;
+    public ?Collection $notes = null;
 
     public function rules()
     {
@@ -52,7 +52,7 @@ class DhcpEntryEdit extends Component
         ];
     }
 
-    public function mount(DhcpEntry $dhcpEntry)
+    public function mount(DhcpEntry $dhcpEntry): void
     {
         $this->dhcpEntry = $dhcpEntry;
         $this->id = $dhcpEntry->id;
@@ -103,39 +103,15 @@ class DhcpEntryEdit extends Component
             'is_imported' => $this->isImported,
         ];
 
-        $dhcpEntry = DhcpEntry::findOrFail($this->id);
-        $dhcpEntry->update($dhcpEntryData);
+        $this->dhcpEntry->update($dhcpEntryData);
 
-        if (!$this->note || $this->note == "") {
-            $this->redirect(route('dhcp-entries'));
-            return;
+        if ($this->note) {
+            $this->dhcpEntry->notes()->create([
+                'note' => strip_tags($this->note),
+                'created_by' => auth()->user()->full_name,
+            ]);
         }
-
-        $noteData = [
-            'note' => strip_tags($this->note),
-            'created_by' => auth()->user()->full_name,
-        ];
-
-        $dhcpEntry->notes()->create($noteData);
 
         $this->redirect(route('dhcp-entries'));
     }
-
-    // TODO note edit/delete functions currently not needed
-    // If including, modify for below
-    // Click on edit note -> toggle text input with save button
-    // Click on save note -> editNote()
-    // public function editNote(array $note): void
-    // {
-    //     $noteId = $note['id'];
-    //     $originalNoteData = $note['note'];
-
-    //     $note = Note::findOrFail($noteId);
-    // }
-
-    // public function deleteNote(string $noteId): void
-    // {
-    //     $note = Note::findOrFail($noteId);
-    //     $note->delete();
-    // }
 }

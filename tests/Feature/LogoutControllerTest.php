@@ -14,7 +14,7 @@ class LogoutControllerTest extends TestCase
     public function test_logout_succeeds(): void
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->get(route('logout'));
+        $response = $this->actingAs($user)->post(route('logout'));
 
         $response->assertRedirect(route('login'));
         $this->assertGuest();

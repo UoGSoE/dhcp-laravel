@@ -60,9 +60,9 @@ class DhcpEntryEditTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_corresponding_data_is_retrieved(): void
+    public function test_livewire_component_loads_correct_dhcp_entry_data(): void
     {
-        $response = $this->actingAs($this->user)->get(route('dhcp-entry.edit', ['dhcpEntry' => $this->dhcpEntry->id]));
+        $this->actingAs($this->user)->get(route('dhcp-entry.edit', ['dhcpEntry' => $this->dhcpEntry->id]));
 
         Livewire::actingAs($this->user)
             ->test(DhcpEntryEdit::class, ['dhcpEntry' => $this->dhcpEntry])
@@ -70,7 +70,7 @@ class DhcpEntryEditTest extends TestCase
             ->assertSee('Lorem ipsum dolor sit test');
     }
 
-    public function test_save_is_successful()
+    public function test_users_can_create_a_new_dhcp_entry()
     {
         Livewire::actingAs($this->user)
             ->test(DhcpEntryEdit::class, ['dhcpEntry' => $this->dhcpEntry])
@@ -90,7 +90,7 @@ class DhcpEntryEditTest extends TestCase
         ]);
     }
 
-    public function test_save_fails_when_data_is_invalid()
+    public function test_saving_a_dhcp_entry_fails_when_data_is_invalid()
     {
         DhcpEntry::factory()->create([
             'hostname' => 'second-hostname',
@@ -109,7 +109,8 @@ class DhcpEntryEditTest extends TestCase
             ->call('saveDhcpEntry')
             ->assertHasErrors(
                 'macAddress'
-            );
+            )
+            ->assertSee('The mac address has already been taken.');
 
         $this->assertDatabaseMissing('dhcp_entries', [
             'id' => $this->dhcpEntry->id,

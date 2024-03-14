@@ -79,7 +79,8 @@ class ImportControllerTest extends TestCase
         $response = $this->post(route('import'), [
             'upload' => $file
         ]);
-        $response->assertStatus(200);
+        $response->assertStatus(302);
+        $response->assertRedirect(route('index'));
 
         $this->assertDatabaseCount('dhcp_entries', 10);
         $this->assertDatabaseHas('dhcp_entries', [
@@ -160,7 +161,9 @@ class ImportControllerTest extends TestCase
 
         ImportDhcpEntriesJob::dispatch($newFileContents, $this->user->email);
 
+        Mail::assertQueued(ImportCompleteMail::class, 1);
         Mail::assertQueued(ImportCompleteMail::class, function ($mail) {
+            // TODO $mail->errors is empty array?
             return $mail->hasTo($this->user->email) && count($mail->errors) == 8;
         });
 
@@ -189,7 +192,9 @@ class ImportControllerTest extends TestCase
 
         ImportDhcpEntriesJob::dispatch($fileContents, $this->user->email);
 
+        Mail::assertQueued(ImportCompleteMail::class, 1);
         Mail::assertQueued(ImportCompleteMail::class, function ($mail) {
+            // TODO $mail->errors is an empty array?
             return $mail->hasTo($this->user->email) && count($mail->errors) == 8;
         });
 

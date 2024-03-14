@@ -34,18 +34,13 @@ class Login extends Component
             'password' => 'required'
         ]);
 
-        $user = User::where('guid', $this->guid)->first();
-        if (!$user) {
-            throw ValidationException::withMessages([
-                'guid' => 'Invalid GUID'
-            ]);
-        }
-
         if (!$ldapService->authenticate($this->guid, $this->password)) {
             throw ValidationException::withMessages([
                 'authentication' => 'Authentication failed'
             ]);
         }
+
+        $user = User::where('guid', $this->guid)->firstOrFail();
 
         Auth::login($user, $this->rememberMe);
         $this->redirect(route('dhcp-entries'));

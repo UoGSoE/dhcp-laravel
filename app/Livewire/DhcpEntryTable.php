@@ -13,12 +13,11 @@ class DhcpEntryTable extends Component
     use WithPagination;
 
     public string $search = '';
-    public int $perPage = 10;
+    public int $perPage = 50;
     public string $sortField = 'created_at';
     public bool $sortAsc = true;
-    public string $activeFilter = "";
+    public string $activeFilter = '';
     public ?bool $active = null;
-    // protected $queryString = ['search', 'perPage', 'sortField', 'sortAsc', 'active',];
 
     public bool $selectPage = false;
     public array $selected = [];
@@ -42,7 +41,7 @@ class DhcpEntryTable extends Component
 
 
             'hostname' => 'required|unique:dhcp_entries,hostname',
-            'mac_address' => 'required|unique:dhcp_entries,mac_address|mac_address',
+            'mac_address' => 'required|mac_address|unique:dhcp_entries,mac_address',
             'ip_address' => 'nullable|ip|unique:dhcp_entries,ip_address',
             'owner' => 'required',
             'is_ssd' => 'required|boolean',
@@ -52,6 +51,7 @@ class DhcpEntryTable extends Component
 
     public function messages(): array
     {
+        // TODO check if Laravel's default messages are fine
         return [
             // 'editedEntries.*.hostname.required' => 'Hostname is required',
             // 'editedEntries.*.hostname.unique' => 'Hostname is already in use',
@@ -117,6 +117,7 @@ class DhcpEntryTable extends Component
 
     public function getResultsProperty()
     {
+        // TODO DhcpEntry::with('latestNote')->isActive()->
         return DhcpEntry::leftJoin('notes', function ($join) {
             $join->on('dhcp_entries.id', '=', 'notes.dhcp_entry_id');
             $join->whereRaw('notes.updated_at = (select max(`updated_at`) from notes where notes.dhcp_entry_id = dhcp_entries.id)');

@@ -8,21 +8,16 @@ use Livewire\Component;
 class DhcpConfigForm extends Component
 {
     public ?DhcpConfig $dhcpConfig = null;
-
-    public ?string $header = null;
-    public ?string $subnets = null;
-    public ?string $groups = null;
-    public ?string $footer = null;
+    public ?string $header = '';
+    public ?string $subnets = '';
+    public ?string $groups = '';
+    public ?string $footer = '';
 
     public bool $showAlertMessage = false;
 
-    public function mount()
+    public function mount(): void
     {
-        $dhcpConfig = DhcpConfig::find(1);
-
-        if (!$dhcpConfig) {
-            return;
-        }
+        $dhcpConfig = DhcpConfig::firstOrCreate();
 
         $this->dhcpConfig = $dhcpConfig;
 
@@ -30,8 +25,6 @@ class DhcpConfigForm extends Component
         $this->subnets = $dhcpConfig->subnets;
         $this->groups = $dhcpConfig->groups;
         $this->footer = $dhcpConfig->footer;
-
-        session()->flash('success', 'DHCP config saved successfully.');
     }
 
     public function render()
@@ -39,27 +32,25 @@ class DhcpConfigForm extends Component
         return view('livewire.dhcp-config.dhcp-config-form');
     }
 
-    public function saveDhcpConfig()
+    public function saveDhcpConfig(): void
     {
         $this->validate([
-            'header' => 'string|nullable',
-            'subnets' => 'string|nullable',
-            'groups' => 'string|nullable',
-            'footer' => 'string|nullable',
+            'header' => 'nullable|string',
+            'subnets' => 'nullable|string',
+            'groups' => 'nullable|string',
+            'footer' => 'nullable|string',
         ]);
-
-        $dhcpConfigData = [
-            'header' => $this->header ? strip_tags($this->header) : $this->header,
-            'subnets' => $this->subnets ? strip_tags($this->subnets) : $this->subnets,
-            'groups' => $this->groups ? strip_tags($this->groups) : $this->groups,
-            'footer' => $this->footer ? strip_tags($this->footer) : $this->footer,
-        ];
 
         if (!$this->dhcpConfig) {
             $this->dhcpConfig = DhcpConfig::create();
         }
 
-        $this->dhcpConfig->update($dhcpConfigData);
+        $this->dhcpConfig->update([
+            'header' => strip_tags($this->header),
+            'subnets' => strip_tags($this->subnets),
+            'groups' => strip_tags($this->groups),
+            'footer' => strip_tags($this->footer),
+        ]);
 
         $this->showAlertMessage = true;
         session()->flash('success', 'DHCP config saved successfully.');

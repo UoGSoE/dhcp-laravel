@@ -78,7 +78,7 @@ class DhcpCacheControllerTest extends TestCase
         $file = Cache::get('dhcpFile');
         $this->assertNull($file);
 
-        $response = $this->get(Route('dhcp-cache'));
+        $response = $this->get(Route('dhcp-cache.show'));
         $response->assertStatus(200);
 
         $file = Cache::get('dhcpFile');

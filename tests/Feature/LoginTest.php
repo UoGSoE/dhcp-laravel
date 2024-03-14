@@ -36,19 +36,29 @@ class LoginTest extends TestCase
         $response->assertSeeLivewire(Login::class);
     }
 
-    public function test_login_fails_when_data_is_invalid(): void
+    public function test_validation_fails_when_inputs_are_invalid_or_missing(): void
     {
         $this->fakeLdapConnection();
 
-        $response = $this->from(route('authenticate'))->post(route('authenticate'), [
-            'guid' => 123,
-            'password' => ''
-        ]);
+        $response = Livewire::test(Login::class)
+            ->set('guid', 'test.user')
+            ->set('password', '')
+            ->call('authenticate');
 
-        $response->assertSessionHasErrors([
-            'guid',
-            'password'
-        ]);
+        // Assert the form has errors - password is required
+        $response->assertHasErrors('password');
+    }
+
+    public function test_login_fails_when_credentials_are_incorrect_(): void
+    {
+        $this->fakeLdapConnection();
+
+        $response = Livewire::test(Login::class)
+            ->set('guid', 'test.user')
+            ->set('password', 'incorrect')
+            ->call('authenticate');
+
+        $response->assertHasErrors('authentication');
     }
 
     public function test_login_succeeds_when_user_exists(): void
@@ -60,25 +70,7 @@ class LoginTest extends TestCase
 
         $response = $this->setInputsAndSubmitForm();
         $response->assertHasNoErrors();
-    }
-
-    public function test_redirects_to_index_page_when_login_succeeds(): void
-    {
-        $this->fakeLdapConnection();
-
-        $userId = Uuid::uuid4()->toString();
-        $this->createValidUser($userId);
-
-        $response = $this->setInputsAndSubmitForm();
         $response->assertRedirect(route('dhcp-entries'));
-    }
-
-    public function test_throws_error_to_user_when_login_fails(): void
-    {
-        $this->fakeLdapConnection();
-
-        $response = $this->setInputsAndSubmitForm();
-        $response->assertHasErrors();
     }
 
     private function createValidUser(string $id): User
