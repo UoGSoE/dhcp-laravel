@@ -37,6 +37,16 @@
                             {{ $key }}
                         </a>
                     </li>
+                @elseif ($key == 'Logout')
+                    <form
+                        method="post"
+                        action="{{ route($item['route']) }}">
+                        @csrf
+                        <button type="submit" class="{{ (request()->routeIs($item['route'])) ? 'text-white-600' : 'text-white-600 hover:text-white-600' }}
+                            group flex gap-x-3 leading-6 w-full pr-3 text-base">
+                            {{ $key }}
+                        </button>
+                    </form>
                 @else
                     <li class="">
                         <a href="{{ route($item['route']) }}" class="{{ (request()->routeIs($item['route'])) ? 'text-white-600' : 'text-white-600 hover:text-white-600' }}
