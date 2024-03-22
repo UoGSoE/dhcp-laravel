@@ -15,9 +15,9 @@ class LoginTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                ->type('guid', '')
-                ->type('password', '')
-                ->assertSee('Laravel');
+                ->type('guid', 'admin')
+                ->type('password', 'admin')
+                ->assertSee('DHCP Entries');
         });
     }
 }
