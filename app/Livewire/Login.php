@@ -34,10 +34,12 @@ class Login extends Component
             'password' => 'required'
         ]);
 
-        if (!$ldapService->authenticate($this->guid, $this->password)) {
-            throw ValidationException::withMessages([
-                'authentication' => 'Authentication failed'
-            ]);
+        if (config('ldap.authentication')) {
+            if (!$ldapService->authenticate($this->guid, $this->password)) {
+                throw ValidationException::withMessages([
+                    'authentication' => 'Authentication failed'
+                ]);
+            }
         }
 
         $user = User::where('guid', $this->guid)->firstOrFail();
