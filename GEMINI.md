@@ -1,4 +1,328 @@
 <laravel-boost-guidelines>
+=== .ai/beads rules ===
+
+# Beads (`bd`) - Issue Tracker Quick Reference
+
+Beads is a lightweight CLI issue tracker with first-class dependency support. Use it instead of TodoWrite for tracking work across sessions.
+
+## Essential Commands
+
+### View Issues
+
+```bash
+bd status              # Overview: counts by status
+
+bd list                # List open issues (default limit 50)
+
+bd list --all          # Include closed issues
+
+bd list -l "label"     # Filter by label
+
+bd list --parent ID    # Show children of an epic
+
+bd ready               # Show issues with no blockers (ready to work on)
+
+bd show <id>           # Full details of an issue
+
+bd graph <id>          # Visual dependency graph
+
+```
+
+### Create Issues
+
+```bash
+bd create "Title" -d "Description"                    # Basic task
+
+bd create "Title" --type=feature -d "Description"     # Feature
+
+bd create "Title" --type=bug -d "Description"         # Bug
+
+bd create "Title" --type=epic -d "Description"        # Epic (group of issues)
+
+bd create "Title" --parent=<epic-id>                  # Child of an epic
+
+bd create "Title" -l "label1,label2"                  # With labels
+
+bd create "Title" -p P1                               # With priority (P0-P4, P0=highest)
+
+```
+
+### Update Issues
+
+```bash
+bd update <id> -s in_progress     # Start working
+
+bd update <id> -s open            # Back to open
+
+bd update <id> --title "New"      # Change title
+
+bd update <id> -d "New desc"      # Change description
+
+bd update <id> --add-label "foo"  # Add label
+
+bd update <id> -p P1              # Change priority
+
+bd update <id> --claim            # Claim issue (assigns to you + in_progress)
+
+```
+
+### Close Issues
+
+```bash
+bd close <id>                     # Close an issue
+
+bd close <id> -r "Reason"         # Close with reason
+
+bd close <id> --suggest-next      # Close and show newly unblocked issues
+
+bd reopen <id>                    # Reopen a closed issue
+
+```
+
+### Dependencies
+
+```bash
+bd dep <blocker-id> --blocks <blocked-id>   # A blocks B
+
+bd dep add <blocked-id> <blocker-id>        # Same as above
+
+bd dep list <id>                            # Show dependencies
+
+bd dep remove <blocked-id> <blocker-id>     # Remove dependency
+
+bd dep tree <id>                            # Show dependency tree
+
+```
+
+## Issue Types
+
+- `task` (default) - General work item
+- `feature` - New functionality
+- `bug` - Something broken
+- `epic` - Container for related issues
+- `chore` - Maintenance work
+
+## Priorities
+
+- `P0` - Critical/urgent
+- `P1` - High priority
+- `P2` - Normal (default)
+- `P3` - Low priority
+- `P4` - Nice to have
+
+## Workflow Pattern
+
+1. **Starting a session**: Run `bd ready` to see what's unblocked
+2. **Pick work**: `bd update <id> --claim` to claim an issue
+3. **Check details**: `bd show <id>` for full context
+4. **Work**: Try to complete the task
+5. **User QA Test**: Stop and ask the user for to test/check the work
+6. **Complete work**: `bd close <id> --suggest-next` to close and see what's newly unblocked
+7. **End of session**: `bd status` to see overall state
+
+## Hierarchical IDs
+
+When creating children of an epic, bd auto-generates hierarchical IDs:
+- Epic: `wcap-qj4`
+- Children: `wcap-qj4.1`, `wcap-qj4.2`, etc.
+
+## Tips
+
+- Use `bd list --long` for detailed multi-line output
+- Use `bd search "keyword"` to search issue text
+- Labels are useful for categorisation: `nice-to-have`, `blocked-external`, etc.
+- The `--suggest-next` flag on close helps maintain flow
+
+## Finally
+
+**NEVER** close an issue without checking the user is happy with the work. This is a critical part of the workflow.
+
+=== .ai/team-conventions rules ===
+
+## Developer Team Guidelines
+
+The developer team is very small - just four people.  So we have developed some guidelines to help us work together.
+
+### Code Style
+
+We follow the laravel conventions for code style and use `pint` to enforce them.
+
+We keep our code *simple* and *readable* and we try to avoid complex or clever code.
+
+We like our code to be able to be read aloud and make sense to a business stakeholder (where possible).
+
+We like readable helper methods and laravel policies to help keep code simple and readable.  For example:
+
+   ```php
+   // avoid code like this
+   if ($user->is_admin && $user->id == $project->user_id) {
+       // do something
+   }
+
+   // prefer this
+   if ($user->can('edit', $project)) {
+       // do something
+   }
+   ```
+
+We **never** use raw SQL or the DB facade in our code.  We **always** use the eloquent ORM and relationships.
+
+Our applications are important but do not contain a lot of data.  So we do not worry too much about micro-optimizations of database queries.  In 99.9999% of cases doing something like `User::orderBy('surname')->get()` is fine - no need to filter/select on specific columns just to save a millisecond.
+
+We like early returns and guard clauses.  Avoid nesting if statements or using `else` whereever possible.
+
+When creating a new model - please also use the `-mf` flag to generate a migration and factory at the same time.  It just saves running multiple commands so saves some tokens.  It also makes sure the newly created files are in the format that matches the version of Laravel.
+
+### Seeding data for local development
+
+When developing locally, we use a seeder called 'TestDataSeeder' to seed the database with data.  This avoids any potential issues with running laravel's default seeder by accident.
+
+So if you have created/modified a model or factory, please check that seeder file matches your changes.
+
+### Eloquent model class conventions
+
+We have a rough convention for the order of functionality in our Eloquent models.  This is :
+
+1. Model boilerplate (eg, the $fillable array)
+2. Lifecycle methods (eg, using the booted method to do some extra work)
+3. Relationships
+4. Scopes
+5. Accessors/Mutators
+6. Custom methods
+
+This convention makes it much easier to navigate the code and find the methods you are looking for.
+
+Also note that we like 'fat models' - helper methods, methods that make the main logic read more naturally - are all fine to put on the model.  Do not abstract to service classes without checking with the user first.  If the user agrees to a service class our convention is to use \App\Services\ .
+
+We like enums over hardcoded strings for things like statuses, roles, etc.  Use laravel's casts to convert the enum to a value.  Our convention is to use \App\Enums\ .  Where is makes sense - we add helper methods to our enums for `label()` (even if it's just doing a `ucfirst()` call - it makes presentation in templates/mailables more consistent) and also `colour()` so we again - get consistent presentation in templates (we usually follow flux-ui's colour names of 'zinc, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose'.
+
+Eloquents `findOrFail` or `firstOrFail` methods are your friend.  We have sentry.io exception reporting.  If the application user is trying to do something weird with a non-existent records - let them see a 404 page and be reported to the developers via sentry.  
+
+### Livewire component class conventions
+
+Our conventions for livewire components are:
+
+1. Properties and attributes at the top
+1.1. Any properties which are used as filters/search or active-tab parameters in the component should use the `#[Url]` livewire attribute
+1.2. Be careful of the `#[Url]` attributes though.  You should avoid using type hints on the properties being tracked in the URL due to the way livewire works.  They will always come through as strings, so you might need to cast or handle those as appropriate. 
+2. The mount() method followed by the render() method
+3. Any lifecycle methods (such as updatedFoo()) next
+4. Any custom methods after all that.
+
+### Mail notifications
+
+We always use queued mail notifications and we always use the --markdown versions for the templates.  Our conventions is to use the 'emails' folder, eg `php artisan make:mail SomethingHappened --markdown=emails.something-happened`
+
+### Testing style
+
+We like feature tests and rarely write unit.
+
+We always test the full side-effects and happy/unhappy paths of our code.  For example, a call to a method that will create a new record and send an email notification if validation passes - we would make sure in the test that if invalid data is passed we do not create the record or send the email.  Not just test that we got a validation error.
+
+We also test that our code does not do other things that we did not expect it to do - for example, if we are testing a method which deletes a record, we would test that just that one record was deleted, not the whole collection.
+
+We always test the existence of records using the related Eloquent model - not just doing raw database assertions.  This helps catch cases where a relation is doing some extra work or should have had a side-effect.
+
+We like our tests to be readable and easy to understand.  We always follow the 'Arrange, Act, Assert' pattern.
+
+We like to use helpful variable names in tests.  For example we might have '$userWithProject' and '$userWithoutProject' to help us understand what is going on in the assertions.
+
+When writing tests and you are getting unexpected results with assertSee or assertDontSee - consider that it might be that Laravels exception page is showing the values in the stack trace or contextual debug into.  Do a quick sanity check using an assertStatus() call or assertHasNoErrors().  If that doesn't help **ask the user for help**.  They can visit the page in the browser and tell you exactly what is happening and even provide you a screenshot.
+
+You may also have the 'test-debug' agent available to you who can help get you unstuck without having to ask the user.  But do not keep looping without trying to ask the user or the agent!  The user spends taxpayer money from a tight research council budget on every token!
+
+We also like to keep our tests quite concise.  For example:
+
+```php
+Livewire::test(CreateProject::class)
+    ->set('name', '')
+    ->set('description', '')
+    ->set('email', 'kkdkdkdkkdkd')
+    ->call('create')
+    ->assertHasErrors(['name', 'description', 'email']);
+assertCount(0, Project::all());
+```
+
+Note that we don't have individual tests for each field.  We just test that the form is invalid when the fields are empty.  We don't need to test the error messages (outside of very unique/custom validation rules).
+
+That is a common pattern in our test code.  We will quite often do something like test the happy path, then the sad path.  For most cases we are testing the functionality - not every tiny detail unless it has actual concrete business logic implications.
+
+Note: if you are running the whole test suite, you can use the `--compact` flag.  It will still show you the full output for any failures, but will save you having to fill up your context window with all the passing test names.
+
+### UI styling
+
+We use the FluxUI component library for our UI and Livewire/AlpineJS for interactivity.
+
+Always check with the laravel boost MCP tool for flux documentation.
+
+Do not add css classes to components for visual styling - only for spacing/alignment/positioning.  Flux has it's own styling so anything that is added will make the component look out of place.  Follow the flux conventions.  Again - the laravel boost tool is your helper here.
+
+Flux uses tailwindcss for styling and also uses it's css reset.
+
+Always use the appropriate flux components instead of just <p> and <a> tags. Eg:
+
+   ```blade
+   <flux:text>Hello</flux:text>
+
+   <flux:link :href="route('home')">Home</flux:link>
+   ```
+
+### Validation
+
+Please don't write custom validation messages.  The laravel ones are fine.
+
+Leverage any project enums using laravels Enum rules.
+
+Remember you can validate existence of records inside validation rules and save yourself further `if { ... }` checks later.
+
+### If in doubt...
+
+The user us always happy to help you out.  They know the whole context of the application, stakeholders, conventions, etc.  They would rather you asked than take a wrong path which costs them time and money to correct.
+
+Most of our applications have been running in production for a long time, so there are all sorts of edge cases, features that were added, then removed, the re-added with a tweak, etc.  Legacy code is a minefield - so lean on the user.
+
+If you are having a problem with a test passing - don't just keep adding code or 'hide' the problem with try/catch etc.  Ask the user for help.  They will 100x prefer to be asked a question and involved in the decision than have lots of new, weird code to debug that might be hiding critical issues.
+
+Also - sometimes just adding a call to `dump()` or `dd()` can help you understand what is going on.  It's a quick way to see what is happening in your code.  In fact Taylor Otwell and Adam Wathan refer to this as 'dump driven development' as it's the way they debug their applications.
+
+### The most important thing
+
+Simplicity and readability of the code.  If you read the code and you can't imagine saying it out loud - then we consider it bad code.
+
+### Use of lando
+
+We use lando for local development - but we also have functional local development environments.  You can run laravel/artisan commands directly without using lando.  
+
+Do not try and run any commands or tools that interact with the database.  Either lando or artisan or boost.  The user will run migrations for you if you ask.  
+
+Note: The local test environment uses an in-memory database via the RefreshDatabase trait.  So there is no need to run migrations or seeders in the test environment.
+
+### Personal information
+
+Quite often you will see the developers or stakeholder names in the git commits, path names, specifications, etc.  We do not want to leak PII.  So please do not use those names in your outputs.  Especially not when writing docs or example scripts.  The one exception to that is if you are directly taling to a developer and giving them an example bash/zsh/whatever script to try right then and there.  Asking the developer to run `/Users/jenny/code/test.sh` is fine.  Putting into a readme or progress document 'Then Jimmy Smith asked for yet another feature change - omg!' is not fine.
+
+### Who we optimise the UX for
+
+Our users are primarily academics, students and teaching administrators.  They are all busy with their work, research and studies.  We optimise out user interfaces to be _quick_.  We don't want to 'engage' our users or to optimise for the time they spend on the app.  We want to let them get in, do the thing, get out as soon and as cleanly as possible.
+
+We do not want a Professor who is researching a cure for cancer to spend five minutes clicking through a bunch of forms, options, menus, etc.  A big button that says "Achieve my task" is what we're always aiming towards.
+
+### Notes from your past self
+
+• Future-me, read this before you touch the keyboard
+
+  - Start with the most obvious solution that satisfies the spec; don’t add guards, double-up "just in case" validation, or abstractions unless the user explicitly asks.
+  - Respect the existing guarantees in the stack (Laravel validation, Blade escaping, etc.)—don’t re-implement or double-check them “just in case.”
+  - In **ALL CASES**, simplicity beats “clever” logic every time.
+  - If a requirement says “simple,” take it literally. No defensive programming unless requested.
+  - For ambiguous cases, ask.  THIS IS CRITICAL TO THE USER.
+  - Do not use the users name or the names of anyone in documents you read.  Your chats with the user are logged to disk so we do not want to leak PII.  Just refer to the user as 'you', or 'stakeholders', 'the person who requested the feature', etc
+  - You are in a local development environment - the test suite uses laravel's RefreshDatabase trait and uses an in-memory sqlite database, so you don't need to run migrations before creating/editing/running tests.
+
+### Final inspiring quote
+
+"Simplicity is the ultimate sophistication."
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -11,19 +335,31 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 - php - 8.4
 - laravel/framework (LARAVEL) - v13
+- laravel/horizon (HORIZON) - v5
 - laravel/prompts (PROMPTS) - v0
+- laravel/sanctum (SANCTUM) - v4
+- laravel/socialite (SOCIALITE) - v5
+- livewire/flux (FLUXUI_FREE) - v2
+- livewire/flux-pro (FLUXUI_PRO) - v2
+- livewire/livewire (LIVEWIRE) - v4
 - laravel/boost (BOOST) - v2
 - laravel/mcp (MCP) - v0
 - laravel/pail (PAIL) - v1
 - laravel/pint (PINT) - v1
 - pestphp/pest (PEST) - v4
 - phpunit/phpunit (PHPUNIT) - v12
+- tailwindcss (TAILWINDCSS) - v4
 
 ## Skills Activation
 
 This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
+- `configuring-horizon` — Use this skill whenever the user mentions Horizon by name in a Laravel context. Covers the full Horizon lifecycle: installing Horizon (horizon:install, Sail setup), configuring config/horizon.php (supervisor blocks, queue assignments, balancing strategies, minProcesses/maxProcesses), fixing the dashboard (authorization via Gate::define viewHorizon, blank metrics, horizon:snapshot scheduling), and troubleshooting production issues (worker crashes, timeout chain ordering, LongWaitDetected notifications, waits config). Also covers job tagging and silencing. Do not use for generic Laravel queues without Horizon, SQS or database drivers, standalone Redis setup, Linux supervisord, Telescope, or job batching.
+- `socialite-development` — Manages OAuth social authentication with Laravel Socialite. Activate when adding social login providers; configuring OAuth redirect/callback flows; retrieving authenticated user details; customizing scopes or parameters; setting up community providers; testing with Socialite fakes; or when the user mentions social login, OAuth, Socialite, or third-party authentication.
+- `fluxui-development` — Use this skill for Flux UI development in Livewire applications only. Trigger when working with <flux:*> components, building or customizing Livewire component UIs, creating forms, modals, tables, or other interactive elements. Covers: flux: components (buttons, inputs, modals, forms, tables, date-pickers, kanban, badges, tooltips, etc.), component composition, Tailwind CSS styling, Heroicons/Lucide icon integration, validation patterns, responsive design, and theming. Do not use for non-Livewire frameworks or non-component styling.
+- `livewire-development` — Use for any task or question involving Livewire. Activate if user mentions Livewire, wire: directives, or Livewire-specific concepts like wire:model, wire:click, wire:sort, or islands, invoke this skill. Covers building new components, debugging reactivity issues, real-time form validation, drag-and-drop, loading states, migrating from Livewire 3 to 4, converting component formats (SFC/MFC/class-based), and performance optimization. Do not use for non-Livewire reactive UI (React, Vue, Alpine-only, Inertia.js) or standard Laravel forms without Livewire.
 - `pest-testing` — Use this skill for Pest PHP testing in Laravel projects only. Trigger whenever any test is being written, edited, fixed, or refactored — including fixing tests that broke after a code change, adding assertions, converting PHPUnit to Pest, adding datasets, and TDD workflows. Always activate when the user asks how to write something in Pest, mentions test files or directories (tests/Feature, tests/Unit, tests/Browser), or needs browser testing, smoke testing multiple pages for JS errors, or architecture tests. Covers: it()/expect() syntax, datasets, mocking, browser testing (visit/click/fill), smoke testing, arch(), Livewire component tests, RefreshDatabase, and all Pest 4 features. Do not use for factories, seeders, migrations, controllers, models, or non-test PHP code.
+- `tailwindcss-development` — Always invoke when the user's message includes 'tailwind' in any form. Also invoke for: building responsive grid layouts (multi-column card grids, product grids), flex/grid page structures (dashboards with sidebars, fixed topbars, mobile-toggle navs), styling UI components (cards, tables, navbars, pricing sections, forms, inputs, badges), adding dark mode variants, fixing spacing or typography, and Tailwind v3/v4 work. The core use case: writing or fixing Tailwind utility classes in HTML templates (Blade, JSX, Vue). Skip for backend PHP logic, database queries, API routes, JavaScript with no HTML/CSS component, CSS file audits, build tool configuration, and vanilla CSS.
 
 ## Conventions
 
@@ -187,6 +523,14 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Vite Error
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
+
+=== livewire/core rules ===
+
+# Livewire
+
+- Livewire allow to build dynamic, reactive interfaces in PHP without writing JavaScript.
+- You can use Alpine.js for client-side interactions instead of JavaScript frameworks.
+- Keep state server-side so the UI reflects it. Validate and authorize in actions as you would in HTTP requests.
 
 === pint/core rules ===
 
