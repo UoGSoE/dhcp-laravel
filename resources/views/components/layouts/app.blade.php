@@ -15,25 +15,15 @@
             <flux:sidebar sticky collapsible class="bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-700 print:hidden">
                 <flux:sidebar.header>
                     <flux:sidebar.brand
-                        href="#"
-                        logo="https://fluxui.dev/img/demo/logo.png"
-                        logo:dark="https://fluxui.dev/img/demo/dark-mode-logo.png"
-                        name="{{  config('app.name') }}"
+                        href="{{ route('home') }}"
+                        name="DHCP DB"
                     />
                     <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
                 </flux:sidebar.header>
                 <flux:sidebar.nav>
-                    <flux:sidebar.item icon="home" href="/" wire:navigate>Home</flux:sidebar.item>
-                    <flux:sidebar.item icon="plus-circle" href="" wire:navigate>New</flux:sidebar.item>
-                    <flux:separator class="my-2" />
-                    <flux:sidebar.item badge="3" icon="list-bullet" href="" wire:navigate>List things</flux:sidebar.item>
-                    <flux:sidebar.item icon="chart-bar" href="" wire:navigate>Report</flux:sidebar.item>
+                    <flux:sidebar.item icon="home" href="{{ route('home') }}" wire:navigate>Home</flux:sidebar.item>
                 </flux:sidebar.nav>
                 <flux:sidebar.spacer />
-                <flux:sidebar.nav>
-                    <flux:sidebar.item icon="cog-6-tooth" href="#">Settings</flux:sidebar.item>
-                    <flux:sidebar.item icon="information-circle" href="#">Help</flux:sidebar.item>
-                </flux:sidebar.nav>
                 <flux:sidebar.nav>
                     <flux:sidebar.item tooltip="Logout" icon="arrow-right-start-on-rectangle">
                         <form method="post" action="{{ route('auth.logout') }}">
@@ -48,23 +38,26 @@
         @endauth
         <flux:header class="lg:hidden print:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
             <flux:spacer />
-
-            <flux:dropdown position="top" align="start">
-
-                <flux:menu>
-                    <flux:menu.item icon="arrow-right-start-on-rectangle">
-                        <form method="post" action="{{ route('auth.logout') }}">
-                            @csrf
-                            <flux:button type="submit">Logout</flux:button>
-                        </form>
-                    </flux:menu.item>
-                </flux:menu>
-            </flux:dropdown>
         </flux:header>
 
         <flux:main>
+            @if (session('success'))
+                <div class="mb-4">
+                    <flux:badge color="green" size="lg">{{ session('success') }}</flux:badge>
+                </div>
+            @endif
+            @if (session('warning'))
+                <div class="mb-4">
+                    <flux:badge color="amber" size="lg">{{ session('warning') }}</flux:badge>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="mb-4">
+                    <flux:badge color="red" size="lg">{{ session('error') }}</flux:badge>
+                </div>
+            @endif
+
             {{ $slot }}
         </flux:main>
 
