@@ -20,7 +20,7 @@ Authentication is handled through Keycloak SSO, with a local login fallback for 
 ## Getting started
 
 ```bash
-git clone <your-repo-url> dhcp-laravel
+git clone git@github.com:UoGSoE/dhcp-laravel.git
 cd dhcp-laravel
 cp .env.example .env
 lando start
