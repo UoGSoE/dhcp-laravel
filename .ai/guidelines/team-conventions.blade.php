@@ -74,44 +74,6 @@ Our conventions for livewire components are:
 
 We always use queued mail notifications and we always use the --markdown versions for the templates.  Our conventions is to use the 'emails' folder, eg `php artisan make:mail SomethingHappened --markdown=emails.something-happened`
 
-### Testing style
-
-We like feature tests and rarely write unit.
-
-We always test the full side-effects and happy/unhappy paths of our code.  For example, a call to a method that will create a new record and send an email notification if validation passes - we would make sure in the test that if invalid data is passed we do not create the record or send the email.  Not just test that we got a validation error.
-
-We also test that our code does not do other things that we did not expect it to do - for example, if we are testing a method which deletes a record, we would test that just that one record was deleted, not the whole collection.
-
-We always test the existence of records using the related Eloquent model - not just doing raw database assertions.  This helps catch cases where a relation is doing some extra work or should have had a side-effect.
-
-We like our tests to be readable and easy to understand.  We always follow the 'Arrange, Act, Assert' pattern.
-
-We like to use helpful variable names in tests.  For example we might have '$userWithProject' and '$userWithoutProject' to help us understand what is going on in the assertions.
-
-When writing tests and you are getting unexpected results with assertSee or assertDontSee - consider that it might be that Laravels exception page is showing the values in the stack trace or contextual debug into.  Do a quick sanity check using an assertStatus() call or assertHasNoErrors().  If that doesn't help **ask the user for help**.  They can visit the page in the browser and tell you exactly what is happening and even provide you a screenshot.
-
-You may also have the 'test-debug' agent available to you who can help get you unstuck without having to ask the user.  But do not keep looping without trying to ask the user or the agent!  The user spends taxpayer money from a tight research council budget on every token!
-
-We also like to keep our tests quite concise.  For example:
-
-@verbatim
-```php
-Livewire::test(CreateProject::class)
-    ->set('name', '')
-    ->set('description', '')
-    ->set('email', 'kkdkdkdkkdkd')
-    ->call('create')
-    ->assertHasErrors(['name', 'description', 'email']);
-assertCount(0, Project::all());
-```
-@endverbatim
-
-Note that we don't have individual tests for each field.  We just test that the form is invalid when the fields are empty.  We don't need to test the error messages (outside of very unique/custom validation rules).
-
-That is a common pattern in our test code.  We will quite often do something like test the happy path, then the sad path.  For most cases we are testing the functionality - not every tiny detail unless it has actual concrete business logic implications.
-
-Note: if you are running the whole test suite, you can use the `--compact` flag.  It will still show you the full output for any failures, but will save you having to fill up your context window with all the passing test names.
-
 ### UI styling
 
 We use the FluxUI component library for our UI and Livewire/AlpineJS for interactivity.
