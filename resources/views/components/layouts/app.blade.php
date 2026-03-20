@@ -22,6 +22,22 @@
                 </flux:sidebar.header>
                 <flux:sidebar.nav>
                     <flux:sidebar.item icon="home" href="{{ route('home') }}" wire:navigate>Home</flux:sidebar.item>
+                    <flux:sidebar.item icon="plus-circle" href="{{ route('hosts.create') }}" wire:navigate>New Host</flux:sidebar.item>
+                    <flux:separator class="my-2" />
+                    <flux:sidebar.group expandable icon="arrow-down-tray" heading="Export" class="grid">
+                        <flux:sidebar.item href="{{ route('export.csv') }}">CSV</flux:sidebar.item>
+                        <flux:sidebar.item href="{{ route('export.json') }}">JSON</flux:sidebar.item>
+                    </flux:sidebar.group>
+                    <flux:sidebar.item icon="chart-bar" href="{{ route('subnet-usage') }}" wire:navigate>Subnet Usage</flux:sidebar.item>
+                    @can('dhcp-admin')
+                        <flux:separator class="my-2" />
+                        <flux:sidebar.group expandable icon="cog-6-tooth" heading="DHCP Config" class="grid">
+                            <flux:sidebar.item href="{{ route('dhcp-sections.edit', 'Header') }}" wire:navigate>Header</flux:sidebar.item>
+                            <flux:sidebar.item href="{{ route('dhcp-sections.edit', 'Subnets') }}" wire:navigate>Subnets</flux:sidebar.item>
+                            <flux:sidebar.item href="{{ route('dhcp-sections.edit', 'Groups') }}" wire:navigate>Groups</flux:sidebar.item>
+                            <flux:sidebar.item href="{{ route('dhcp-sections.edit', 'Footer') }}" wire:navigate>Footer</flux:sidebar.item>
+                        </flux:sidebar.group>
+                    @endcan
                 </flux:sidebar.nav>
                 <flux:sidebar.spacer />
                 <flux:sidebar.nav>
