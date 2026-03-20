@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33aa939df509ae0508995146fb22c83b",
+    "content-hash": "fc34a09eec93e10cb0f48d440f8e2ced",
     "packages": [
         {
             "name": "brick/math",
@@ -9307,6 +9307,52 @@
                 }
             ],
             "time": "2025-12-08T11:19:18+00:00"
+        },
+        {
+            "name": "uogsoe/laravel-init",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/UoGSoE/laravel-init.git",
+                "reference": "752e2fc8892ac5d8d72f0eac3583c34f01a00f2b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/UoGSoE/laravel-init/zipball/752e2fc8892ac5d8d72f0eac3583c34f01a00f2b",
+                "reference": "752e2fc8892ac5d8d72f0eac3583c34f01a00f2b",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^11.0|^12.0|^13.0",
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "UoGSoE\\LaravelInit\\LaravelInitServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "UoGSoE\\LaravelInit\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Bootstraps Laravel projects with Flux UI, Keycloak SSO, and common packages",
+            "keywords": [
+                "dev"
+            ],
+            "support": {
+                "issues": "https://github.com/UoGSoE/laravel-init/issues",
+                "source": "https://github.com/UoGSoE/laravel-init/tree/1.1.2"
+            },
+            "time": "2026-03-20T17:02:17+00:00"
         },
         {
             "name": "webmozart/assert",
