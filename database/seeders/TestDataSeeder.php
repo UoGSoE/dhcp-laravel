@@ -2,16 +2,17 @@
 
 namespace Database\Seeders;
 
+use App\Models\Host;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
 
 class TestDataSeeder extends Seeder
 {
-
     public function run(): void
     {
-        [$adminUser, $standardUser] = $this->createUsers();
+        $this->createUsers();
+        $this->call(DhcpSectionSeeder::class);
+        $this->createHosts();
     }
 
     private function createUsers(): array
@@ -37,4 +38,33 @@ class TestDataSeeder extends Seeder
         return [$adminUser, $standardUser];
     }
 
+    private function createHosts(): void
+    {
+        // Regular hosts with fixed IPs
+        Host::factory()->count(10)->create();
+
+        // Pool hosts (no IP, hostname auto-generated)
+        Host::factory()->poolHost()->count(5)->create();
+
+        // Disabled hosts
+        Host::factory()->disabled()->count(2)->create();
+
+        // SSD hosts
+        Host::factory()->withSsd()->count(2)->create();
+
+        // Duplicate MAC pair — same device in two buildings
+        $sharedMac = 'aa:bb:cc:dd:ee:ff';
+        Host::factory()->create([
+            'mac' => $sharedMac,
+            'hostname' => 'laptop-jws-lab',
+            'ip' => '130.209.240.1',
+            'notes' => 'James Watt South lab',
+        ]);
+        Host::factory()->create([
+            'mac' => $sharedMac,
+            'hostname' => 'laptop-rankine-8',
+            'ip' => '130.209.240.2',
+            'notes' => 'Rankine building floor 8',
+        ]);
+    }
 }

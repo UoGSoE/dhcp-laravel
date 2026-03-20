@@ -30,3 +30,5 @@ Thumbs.db
 !/storage/meilisearch/.gitkeep*
 npm-debug.log
 yarn-error.log
+/.ait
+GOOD_MIGRATION*
