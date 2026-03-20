@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ExportController;
+use App\Livewire\DhcpSectionEditor;
 use App\Livewire\HostForm;
 use App\Livewire\HostList;
 use Illuminate\Support\Facades\Route;
@@ -13,4 +14,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/hosts/{host}/edit', HostForm::class)->name('hosts.edit');
     Route::get('/export/csv', [ExportController::class, 'csv'])->name('export.csv');
     Route::get('/export/json', [ExportController::class, 'json'])->name('export.json');
+
+    Route::middleware('can:dhcp-admin')->group(function () {
+        Route::get('/dhcp-sections/{sectionName}/edit', DhcpSectionEditor::class)->name('dhcp-sections.edit');
+    });
 });
