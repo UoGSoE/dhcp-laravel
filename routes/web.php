@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExportController;
 use App\Livewire\HostForm;
 use App\Livewire\HostList;
 use Illuminate\Support\Facades\Route;
@@ -10,4 +11,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/', HostList::class)->name('home');
     Route::get('/hosts/create', HostForm::class)->name('hosts.create');
     Route::get('/hosts/{host}/edit', HostForm::class)->name('hosts.edit');
+    Route::get('/export/csv', [ExportController::class, 'csv'])->name('export.csv');
+    Route::get('/export/json', [ExportController::class, 'json'])->name('export.json');
 });
