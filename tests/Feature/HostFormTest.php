@@ -6,6 +6,57 @@ use App\Models\Host;
 use App\Models\User;
 use Livewire\Livewire;
 
+it('can load a host via edit-host event', function () {
+    $user = User::factory()->create();
+    $host = Host::factory()->create([
+        'hostname' => 'glasgow-lab-1',
+        'mac' => 'aa:bb:cc:dd:ee:ff',
+        'owner' => 'researcher@glasgow.ac.uk',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(HostForm::class)
+        ->dispatch('edit-host', id: $host->id)
+        ->assertSet('mac', 'aa:bb:cc:dd:ee:ff')
+        ->assertSet('owner', 'researcher@glasgow.ac.uk')
+        ->assertSet('hostname', 'glasgow-lab-1');
+});
+
+it('shows Edit Host heading when editing', function () {
+    $user = User::factory()->create();
+    $host = Host::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(HostForm::class)
+        ->dispatch('edit-host', id: $host->id)
+        ->assertSee('Edit Host');
+});
+
+it('shows Create Host heading when creating', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(HostForm::class)
+        ->dispatch('create-host')
+        ->assertSee('Create Host');
+});
+
+it('can reset form via create-host event', function () {
+    $user = User::factory()->create();
+    $host = Host::factory()->create(['hostname' => 'glasgow-lab-1', 'mac' => 'aa:bb:cc:dd:ee:ff']);
+
+    Livewire::actingAs($user)
+        ->test(HostForm::class)
+        ->dispatch('edit-host', id: $host->id)
+        ->assertSet('mac', 'aa:bb:cc:dd:ee:ff')
+        ->dispatch('create-host')
+        ->assertSet('mac', '')
+        ->assertSet('owner', '')
+        ->assertSet('hostname', '')
+        ->assertSet('status', 'Enabled')
+        ->assertSet('ssd', 'No');
+});
+
 it('can create a host with valid data', function () {
     $user = User::factory()->create(['username' => 'wra1z']);
 
@@ -20,7 +71,7 @@ it('can create a host with valid data', function () {
         ->set('notes', 'Main lab workstation')
         ->call('save')
         ->assertHasNoErrors()
-        ->assertRedirect('/');
+        ->assertDispatched('host-saved');
 
     $host = Host::first();
     expect($host->mac)->toBe('aa:bb:cc:dd:ee:ff')
@@ -115,12 +166,25 @@ it('can update an existing host', function () {
     $host = Host::factory()->create(['hostname' => 'old-name', 'mac' => 'aa:bb:cc:dd:ee:ff']);
 
     Livewire::actingAs($user)
-        ->test(HostForm::class, ['host' => $host])
+        ->test(HostForm::class)
+        ->dispatch('edit-host', id: $host->id)
         ->set('hostname', 'new-name')
         ->call('save')
-        ->assertHasNoErrors();
+        ->assertHasNoErrors()
+        ->assertDispatched('host-saved');
 
     expect($host->fresh()->hostname)->toBe('new-name');
+});
+
+it('shows delete confirmation modal when editing a host', function () {
+    $user = User::factory()->create();
+    $host = Host::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(HostForm::class)
+        ->dispatch('edit-host', id: $host->id)
+        ->assertSee('Delete host?')
+        ->assertSee('This will permanently remove the host record');
 });
 
 it('can delete a host', function () {
@@ -128,9 +192,10 @@ it('can delete a host', function () {
     $host = Host::factory()->create();
 
     Livewire::actingAs($user)
-        ->test(HostForm::class, ['host' => $host])
+        ->test(HostForm::class)
+        ->dispatch('edit-host', id: $host->id)
         ->call('delete')
-        ->assertRedirect('/');
+        ->assertDispatched('host-saved');
 
     expect(Host::count())->toBe(0);
 });
@@ -141,7 +206,8 @@ it('flushes checkins when a host is deleted', function () {
     Checkin::factory()->create();
 
     Livewire::actingAs($user)
-        ->test(HostForm::class, ['host' => $host])
+        ->test(HostForm::class)
+        ->dispatch('edit-host', id: $host->id)
         ->call('delete');
 
     expect(Checkin::count())->toBe(0);

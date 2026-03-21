@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Host;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -10,6 +11,12 @@ class HostList extends Component
 {
     #[Url]
     public $search = '';
+
+    #[On('host-saved')]
+    public function refreshList(): void
+    {
+        // Livewire re-renders automatically
+    }
 
     public function render()
     {

@@ -81,3 +81,28 @@ it('shows total count of entries', function () {
 
     $response->assertSee('Total: 3 entries');
 });
+
+it('shows the new host button on the list page', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get('/');
+
+    $response->assertSee('New Host');
+});
+
+it('shows export links on the list page', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get('/');
+
+    $response->assertSee(route('export.csv'));
+    $response->assertSee(route('export.json'));
+});
+
+it('does not have standalone host form routes', function () {
+    $user = User::factory()->create();
+    $host = Host::factory()->create();
+
+    $this->actingAs($user)->get('/hosts/create')->assertNotFound();
+    $this->actingAs($user)->get("/hosts/{$host->id}/edit")->assertNotFound();
+});

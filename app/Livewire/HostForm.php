@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Enums\HostStatus;
 use App\Models\Checkin;
 use App\Models\Host;
+use Flux;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class HostForm extends Component
@@ -28,18 +30,42 @@ class HostForm extends Component
     public function mount(?Host $host = null): void
     {
         if ($host?->exists) {
-            $this->host = $host;
-            $this->mac = $host->mac;
-            $this->owner = $host->owner;
-            $this->ip = $host->ip ?? '';
-            $this->hostname = $host->hostname ?? '';
-            $this->status = $host->status->uiEquivalent()->value;
-            $this->ssd = $host->ssd;
-            $this->notes = $host->notes ?? '';
+            $this->loadHost($host);
         }
     }
 
-    public function save(): mixed
+    #[On('edit-host')]
+    public function editHost(int $id): void
+    {
+        $this->loadHost(Host::findOrFail($id));
+    }
+
+    #[On('create-host')]
+    public function createHost(): void
+    {
+        $this->host = null;
+        $this->mac = '';
+        $this->owner = '';
+        $this->ip = '';
+        $this->hostname = '';
+        $this->status = 'Enabled';
+        $this->ssd = 'No';
+        $this->notes = '';
+    }
+
+    private function loadHost(Host $host): void
+    {
+        $this->host = $host;
+        $this->mac = $host->mac;
+        $this->owner = $host->owner;
+        $this->ip = $host->ip ?? '';
+        $this->hostname = $host->hostname ?? '';
+        $this->status = $host->status->uiEquivalent()->value;
+        $this->ssd = $host->ssd;
+        $this->notes = $host->notes ?? '';
+    }
+
+    public function save(): void
     {
         $rules = [
             'mac' => ['required', 'regex:/^([0-9a-fA-F]{2}[:\-]?){5}[0-9a-fA-F]{2}$|^[0-9a-fA-F]{12}$/'],
@@ -83,24 +109,23 @@ class HostForm extends Component
         $duplicateCount = Host::where('mac', $normalisedMac)->where('id', '!=', $host->id)->count();
 
         if ($duplicateCount > 0) {
-            session()->flash('warning', 'Warning : entry saved, but duplicate MAC address');
-
-            return $this->redirect('/?search='.$normalisedMac);
+            Flux::toast(heading: 'Warning', text: 'Entry saved, but duplicate MAC address', variant: 'warning');
+        } else {
+            Flux::toast(text: 'Host saved.', variant: 'success');
         }
 
-        session()->flash('success', 'Host saved.');
-
-        return $this->redirect('/');
+        $this->dispatch('host-saved');
+        $this->modal('host-form')->close();
     }
 
-    public function delete(): mixed
+    public function delete(): void
     {
         $this->host->delete();
         Checkin::truncate();
 
-        session()->flash('success', 'Host deleted.');
-
-        return $this->redirect('/');
+        Flux::toast(text: 'Host deleted.', variant: 'success');
+        $this->dispatch('host-saved');
+        $this->modal('host-form')->close();
     }
 
     public function render()

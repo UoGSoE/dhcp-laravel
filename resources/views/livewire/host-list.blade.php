@@ -1,8 +1,18 @@
 <div>
-    <div class="mb-6 flex gap-4">
-        <form wire:submit.prevent="$refresh" class="flex gap-2">
-            <flux:input wire:model.live.debounce.300ms="search" placeholder="Search hosts..." icon="magnifying-glass" />
-        </form>
+    <div class="mb-6 flex items-center gap-4">
+        <flux:input wire:model.live.debounce.300ms="search" placeholder="Search hosts..." icon="magnifying-glass" class="flex-1" />
+
+        <flux:dropdown>
+            <flux:button icon="arrow-down-tray" variant="ghost">Export</flux:button>
+            <flux:menu>
+                <flux:menu.item href="{{ route('export.csv') }}" icon="document-text">CSV</flux:menu.item>
+                <flux:menu.item href="{{ route('export.json') }}" icon="code-bracket">JSON</flux:menu.item>
+            </flux:menu>
+        </flux:dropdown>
+
+        <flux:modal.trigger name="host-form">
+            <flux:button icon="plus" variant="primary" wire:click="$dispatch('create-host')">New Host</flux:button>
+        </flux:modal.trigger>
     </div>
 
     <flux:table>
@@ -19,7 +29,7 @@
             @foreach ($hosts as $host)
                 <flux:table.row :variant="$host->status->isDisabledInConfig() ? 'danger' : ($host->ssd === 'Yes' ? 'warning' : null)">
                     <flux:table.cell>
-                        <flux:link href="{{ route('hosts.edit', $host) }}" wire:navigate>{{ $host->hostname }}</flux:link>
+                        <flux:link href="#" wire:click.prevent="$dispatch('edit-host', { id: {{ $host->id }} })">{{ $host->hostname }}</flux:link>
                     </flux:table.cell>
                     <flux:table.cell>{{ $host->mac }}</flux:table.cell>
                     <flux:table.cell>{{ $host->ip }}</flux:table.cell>
@@ -35,4 +45,8 @@
     </flux:table>
 
     <flux:text class="mt-4">Total: {{ $hosts->count() }} entries</flux:text>
+
+    <flux:modal name="host-form" flyout class="md:w-lg">
+        <livewire:host-form />
+    </flux:modal>
 </div>

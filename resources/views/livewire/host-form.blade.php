@@ -1,7 +1,7 @@
 <div>
-    <flux:heading size="xl" level="1">{{ $host ? 'Edit Host' : 'Create Host' }}</flux:heading>
+    <flux:heading size="lg">{{ $host ? 'Edit Host' : 'Create Host' }}</flux:heading>
 
-    <form wire:submit="save" class="mt-6 space-y-4 max-w-lg">
+    <form wire:submit="save" class="mt-4 space-y-4">
         <flux:input label="MAC address" wire:model="mac" placeholder="Colon or dash separated" required />
         <flux:input label="Owner" type="email" wire:model="owner" placeholder="Owner/contact email" required />
         <flux:input label="Fixed IP" wire:model="ip" placeholder="Leave blank for pool" />
@@ -21,10 +21,30 @@
 
         <div class="flex gap-2">
             <flux:button type="submit" variant="primary">Save</flux:button>
-            <flux:button href="{{ route('home') }}" wire:navigate>Cancel</flux:button>
+            <flux:modal.close>
+                <flux:button>Cancel</flux:button>
+            </flux:modal.close>
             @if ($host)
-                <flux:button wire:click="delete" wire:confirm="Are you sure you want to delete this host?" variant="danger">Delete</flux:button>
+                <flux:modal.trigger name="confirm-delete">
+                    <flux:button variant="danger">Delete</flux:button>
+                </flux:modal.trigger>
             @endif
         </div>
     </form>
+
+    <flux:modal name="confirm-delete" class="min-w-[22rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Delete host?</flux:heading>
+                <flux:text class="mt-2">This will permanently remove the host record. This cannot be undone.</flux:text>
+            </div>
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button variant="danger" wire:click="delete">Delete</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </div>
