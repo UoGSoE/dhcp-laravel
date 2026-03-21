@@ -38,6 +38,7 @@ class HostForm extends Component
     public function editHost(int $id): void
     {
         $this->loadHost(Host::findOrFail($id));
+        Flux::modal('host-form')->show();
     }
 
     #[On('create-host')]
