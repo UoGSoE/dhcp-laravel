@@ -40,6 +40,14 @@ class TestDataSeeder extends Seeder
 
     private function createHosts(): void
     {
+        // Bulk hosts with guaranteed unique MACs (locally-administered prefix 02:00)
+        Host::factory()
+            ->count(1000)
+            ->sequence(fn (int $index) => [
+                'mac' => sprintf('02:00:%02x:%02x:%02x:%02x', ($index >> 24) & 0xFF, ($index >> 16) & 0xFF, ($index >> 8) & 0xFF, $index & 0xFF),
+            ])
+            ->create();
+
         // Regular hosts with fixed IPs
         Host::factory()->count(10)->create();
 
